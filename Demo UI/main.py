@@ -25,11 +25,16 @@ class Signup(Screen):
     pass
 
 
+class Menu(Screen):
+    pass
+
+
 sm = ScreenManager()
 sm.add_widget(AppLoad(name='appload'))
 sm.add_widget(LoginSignup(name='login_signup'))
 sm.add_widget(Login(name='login'))
 sm.add_widget(Signup(name='signup'))
+sm.add_widget(Signup(name='menu'))
 
 
 class DemoUI(MDApp):
@@ -50,7 +55,14 @@ class DemoUI(MDApp):
         self.screen.current = 'login_signup'
 
     def on_start(self):
-        Clock.schedule_once(self.download_and_transition, 2)
+        Clock.schedule_once(self.download_and_transition, 1)
+
+    def handleFloatingActionButton(self, instance):
+        if instance.icon is 'power':
+            exit()
+        elif instance.icon is 'logout':
+            self.screen.transition.direction = 'right'
+            self.screen.current = 'login_signup'
 
 
 DemoUI().run()
