@@ -43,8 +43,8 @@ sm.add_widget(AppLoad(name='appload'))
 sm.add_widget(LoginSignup(name='login_signup'))
 sm.add_widget(Login(name='login'))
 sm.add_widget(Signup(name='signup'))
-sm.add_widget(MainMenu(name='mainmenu'))
 sm.add_widget(ContentChoice(name='contentchoice'))
+sm.add_widget(MainMenu(name='mainmenu'))
 sm.add_widget(ContentList(name='contentlist'))
 
 
@@ -69,17 +69,17 @@ class DemoUI(MDApp):
 
     def choice_movies(self):
         self.current_content_choice = "movies"
-        self.screen.current = 'mainmenu'
+        self.transition('mainmenu')
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring movies!"
 
     def choice_songs(self):
         self.current_content_choice = "songs"
-        self.screen.current = 'mainmenu'
+        self.transition('mainmenu')
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring songs!"
 
     def choice_books(self):
         self.current_content_choice = "books"
-        self.screen.current = 'mainmenu'
+        self.transition('mainmenu')
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring books!"
 
     def return_content_dict(self):
@@ -89,7 +89,8 @@ class DemoUI(MDApp):
         return content_dict
 
     def show_content(self):
-        self.screen.current = 'contentlist'
+        self.screen.transition.direction = 'left'
+        self.transition('contentlist')
         content_dict = self.return_content_dict()
         for key, value in content_dict.items():
             item = OneLineListItem(text=value)
@@ -98,12 +99,17 @@ class DemoUI(MDApp):
     def on_start(self):
         Clock.schedule_once(self.download_and_transition, 2.5)
 
-    def handleFloatingActionButton(self, instance):
-        if instance.icon is 'power':
-            exit()
-        elif instance.icon is 'logout':
+    def transition(self, to):
+        self.previousScreen = self.screen.current
+        self.screen.current = to
+
+    def handleFloatingActionButtonSpeedDial(self, instance):
+        if instance.icon == "arrow-left":
             self.screen.transition.direction = 'right'
-            self.screen.current = 'login_signup'
+            self.transition(self.previousScreen)
+        elif instance.icon == 'logout':
+            self.screen.transition.direction = 'right'
+            self.transition('login_signup')
 
 
 DemoUI().run()

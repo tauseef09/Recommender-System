@@ -33,7 +33,7 @@ ScreenManager:
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
             root.manager.transition.direction = 'left'
-            root.manager.current = 'login'
+            app.transition('login')
     MDRectangleFlatButton:
         text: 'Signup'
         pos_hint: {'center_x': 0.5, 'center_y': 0.25}
@@ -41,7 +41,7 @@ ScreenManager:
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
             root.manager.transition.direction = 'left'
-            root.manager.current = 'signup'
+            app.transition('signup')
 
 <Login>:
     name: 'login'
@@ -71,7 +71,7 @@ ScreenManager:
         pos_hint: {'center_x': 0.5, 'center_y': 0.25}
         on_release:
             root.manager.transition.direction = 'left'
-            root.manager.current = 'contentchoice'
+            app.transition('contentchoice')
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
 
@@ -119,47 +119,9 @@ ScreenManager:
         pos_hint: {'center_x': 0.5, 'center_y': 0.25}
         on_release:
             root.manager.transition.direction = 'left'
-            root.manager.current = 'contentchoice'
+            app.transition('contentchoice')
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
-
-<MainMenu>:
-    name: 'mainmenu'
-    MDLabel:
-        id: main_menu_label
-        text: "Welcome, Tauseef!"
-        halign: 'center'
-        pos_hint: {'center_y': 0.85}
-        font_style: 'H4'
-        theme_text_color: 'Custom'
-        text_color: 38/255, 50/255, 56/255, 1
-    MDRectangleFlatButton:
-        text: "Based on Ratings"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.63}
-        theme_text_color: 'Custom'
-        text_color: 38/255, 50/255, 56/255, 1
-        on_release: app.show_content()
-    MDRectangleFlatButton:
-        text: "Based on Mood"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.53}
-        theme_text_color: 'Custom'
-        text_color: 38/255, 50/255, 56/255, 1
-        on_release: app.show_content()
-    MDRectangleFlatButton:
-        text: "Search Content"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.43}
-        theme_text_color: 'Custom'
-        text_color: 38/255, 50/255, 56/255, 1
-    MDFloatingActionButtonSpeedDial:
-        data: {"logout":"Logout", "arrow-left":"Back"}
-        rotation_root_button: True
-        hint_animation: True
-        label_text_color: [239/255, 239/255, 239/255, 1]
-        bg_hint_color: [38/255, 50/255, 56/255, 1]
-        bg_color_stack_button: [38/255, 50/255, 56/255, 1]
-        bg_color_root_button: [38/255, 50/255, 56/255, 1]
-        color_icon_root_button: [239/255, 239/255, 239/255, 1]
-        color_icon_stack_button: [239/255, 239/255, 239/255, 1]
 
 <ContentChoice>:
     name: 'contentchoice'
@@ -196,7 +158,47 @@ ScreenManager:
         text_color: 38/255, 50/255, 56/255, 1
         on_release: app.choice_books()
     MDFloatingActionButtonSpeedDial:
+        data: {'logout': 'Logout', 'arrow-left': 'Back',}
+        callback: app.handleFloatingActionButtonSpeedDial
+        rotation_root_button: True
+        hint_animation: True
+        label_text_color: [239/255, 239/255, 239/255, 1]
+        bg_hint_color: [38/255, 50/255, 56/255, 1]
+        bg_color_stack_button: [38/255, 50/255, 56/255, 1]
+        bg_color_root_button: [38/255, 50/255, 56/255, 1]
+        color_icon_root_button: [239/255, 239/255, 239/255, 1]
+        color_icon_stack_button: [239/255, 239/255, 239/255, 1]
+
+<MainMenu>:
+    name: 'mainmenu'
+    MDLabel:
+        id: main_menu_label
+        text: "Welcome, Tauseef!"
+        halign: 'center'
+        pos_hint: {'center_y': 0.85}
+        font_style: 'H4'
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
+    MDRectangleFlatButton:
+        text: "Based on Ratings"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.63}
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
+        on_release: app.show_content()
+    MDRectangleFlatButton:
+        text: "Based on Mood"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.53}
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
+        on_release: app.show_content()
+    MDRectangleFlatButton:
+        text: "Search Content"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.43}
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
+    MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
+        callback: app.handleFloatingActionButtonSpeedDial
         rotation_root_button: True
         hint_animation: True
         label_text_color: [239/255, 239/255, 239/255, 1]
