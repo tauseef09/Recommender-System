@@ -196,7 +196,7 @@ ScreenManager:
         id: art
         source: 'logo/art1.png'
         size_hint: 0.6, 0.6
-        pos_hint: {'center_x': 0.35, 'center_y': 0.2}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.2}
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
         callback: app.handleFloatingActionButtonSpeedDial
