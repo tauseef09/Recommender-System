@@ -72,16 +72,22 @@ class DemoUI(MDApp):
         self.current_content_choice = "movies"
         self.transition('mainmenu', True)
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring movies!"
+        self.screen.get_screen('mainmenu').ids.art.source = "logo/art3.jpg"
+        self.screen.get_screen('mainmenu').ids.art.size_hint = 0.6, 0.6
 
     def choice_songs(self):
         self.current_content_choice = "songs"
         self.transition('mainmenu', True)
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring songs!"
+        self.screen.get_screen('mainmenu').ids.art.source = "logo/art1.jpg"
+        self.screen.get_screen('mainmenu').ids.art.size_hint = 0.8, 0.8
 
     def choice_books(self):
         self.current_content_choice = "books"
         self.transition('mainmenu', True)
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring books!"
+        self.screen.get_screen('mainmenu').ids.art.source = "logo/art2.jpg"
+        self.screen.get_screen('mainmenu').ids.art.size_hint = 0.6, 0.6
 
     def return_content_dict(self):
         content_dict = dict()
