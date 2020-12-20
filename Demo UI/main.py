@@ -53,6 +53,7 @@ class DemoUI(MDApp):
 
     def build(self):
         self.screen = Builder.load_string(screens)
+        self.previousScreen = list()  # to hold the screen transitions
         return self.screen
 
     def download_and_transition(self, obj):
@@ -69,17 +70,17 @@ class DemoUI(MDApp):
 
     def choice_movies(self):
         self.current_content_choice = "movies"
-        self.transition('mainmenu')
+        self.transition('mainmenu', True)
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring movies!"
 
     def choice_songs(self):
         self.current_content_choice = "songs"
-        self.transition('mainmenu')
+        self.transition('mainmenu', True)
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring songs!"
 
     def choice_books(self):
         self.current_content_choice = "books"
-        self.transition('mainmenu')
+        self.transition('mainmenu', True)
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring books!"
 
     def return_content_dict(self):
@@ -89,8 +90,7 @@ class DemoUI(MDApp):
         return content_dict
 
     def show_content(self):
-        self.screen.transition.direction = 'left'
-        self.transition('contentlist')
+        self.transition('contentlist', True)
         content_dict = self.return_content_dict()
         for key, value in content_dict.items():
             item = OneLineListItem(text=value)
@@ -99,17 +99,21 @@ class DemoUI(MDApp):
     def on_start(self):
         Clock.schedule_once(self.download_and_transition, 2.5)
 
-    def transition(self, to):
-        self.previousScreen = self.screen.current
-        self.screen.current = to
+    def transition(self, to, forward):
+        # takes the screen it needs to transition to and if its a forward transition
+        if forward:
+            self.screen.transition.direction = 'left'
+            self.previousScreen.append(self.screen.current)
+            self.screen.current = to
+        else:
+            self.screen.transition.direction = 'right'
+            self.screen.current = self.previousScreen.pop()  # for going back it does not need a destination
 
     def handleFloatingActionButtonSpeedDial(self, instance):
         if instance.icon == "arrow-left":
-            self.screen.transition.direction = 'right'
-            self.transition(self.previousScreen)
-        elif instance.icon == 'logout':
-            self.screen.transition.direction = 'right'
-            self.transition('login_signup')
+            self.transition(self.previousScreen, False)
+        elif instance.icon == "logout":
+            self.transition('login_signup', True)
 
 
 DemoUI().run()

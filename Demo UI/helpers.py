@@ -32,16 +32,14 @@ ScreenManager:
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
-            root.manager.transition.direction = 'left'
-            app.transition('login')
+            app.transition('login', True)
     MDRectangleFlatButton:
         text: 'Signup'
         pos_hint: {'center_x': 0.5, 'center_y': 0.25}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
-            root.manager.transition.direction = 'left'
-            app.transition('signup')
+            app.transition('signup', True)
 
 <Login>:
     name: 'login'
@@ -70,8 +68,7 @@ ScreenManager:
         text: "Login"
         pos_hint: {'center_x': 0.5, 'center_y': 0.25}
         on_release:
-            root.manager.transition.direction = 'left'
-            app.transition('contentchoice')
+            app.transition('contentchoice', True)
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
 
@@ -118,8 +115,7 @@ ScreenManager:
         text: "Signup"
         pos_hint: {'center_x': 0.5, 'center_y': 0.25}
         on_release:
-            root.manager.transition.direction = 'left'
-            app.transition('contentchoice')
+            app.transition('contentchoice', True)
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
 
