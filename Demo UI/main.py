@@ -38,6 +38,10 @@ class ContentList(Screen):
     pass
 
 
+class MoodPhotoChoice(Screen):
+    pass
+
+
 sm = ScreenManager()
 sm.add_widget(AppLoad(name='appload'))
 sm.add_widget(LoginSignup(name='login_signup'))
@@ -46,6 +50,7 @@ sm.add_widget(Signup(name='signup'))
 sm.add_widget(ContentChoice(name='contentchoice'))
 sm.add_widget(MainMenu(name='mainmenu'))
 sm.add_widget(ContentList(name='contentlist'))
+sm.add_widget(MoodPhotoChoice(name='moodphotochoice'))
 
 
 class DemoUI(MDApp):
@@ -88,6 +93,21 @@ class DemoUI(MDApp):
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring books!"
         self.screen.get_screen('mainmenu').ids.art.source = "logo/art2.png"
         self.screen.get_screen('mainmenu').ids.art.size_hint = 0.6, 0.6
+
+    def show_mood_photo_choice(self):
+        self.transition('moodphotochoice', True)
+        if self.current_content_choice == "movies":
+            self.screen.get_screen('moodphotochoice').ids.moodphotochoice_label.text = "Exploring movies!"
+            self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.source = "logo/art3.png"
+            self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.size_hint = 0.6, 0.6
+        elif self.current_content_choice == "songs":
+            self.screen.get_screen('moodphotochoice').ids.moodphotochoice_label.text = "Exploring songs!"
+            self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.source = "logo/art1.png"
+            self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.size_hint = 0.9, 0.9
+        elif self.current_content_choice == "books":
+            self.screen.get_screen('moodphotochoice').ids.moodphotochoice_label.text = "Exploring books!"
+            self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.source = "logo/art2.png"
+            self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.size_hint = 0.6, 0.6
 
     def return_content_dict(self):
         content_dict = dict()

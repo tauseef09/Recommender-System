@@ -7,6 +7,7 @@ ScreenManager:
     MainMenu:
     ContentChoice:
     ContentList:
+    MoodPhotoChoice:
 
 <AppLoad>:
     name: 'appload'
@@ -186,7 +187,7 @@ ScreenManager:
         pos_hint: {'center_x': 0.5, 'center_y': 0.53}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
-        on_release: app.show_content()
+        on_release: app.show_mood_photo_choice()
     MDRectangleFlatButton:
         text: "Search Content"
         pos_hint: {'center_x': 0.5, 'center_y': 0.43}
@@ -225,4 +226,43 @@ ScreenManager:
         bg_color_root_button: [38/255, 50/255, 56/255, 1]
         color_icon_root_button: [239/255, 239/255, 239/255, 1]
         color_icon_stack_button: [239/255, 239/255, 239/255, 1]
+        
+        
+<MoodPhotoChoice>:
+    name: 'moodphotochoice'
+    MDLabel:
+        id: moodphotochoice_label
+        text: "Welcome, Tauseef!"
+        halign: 'center'
+        pos_hint: {'center_y': 0.85}
+        font_style: 'H4'
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
+    MDRectangleFlatButton:
+        text: "Take Photo"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.63}
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
+    MDRectangleFlatButton:
+        text: "Choose Mood"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.53}
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
+    Image:
+        id: art_moodphotochoice
+        source: 'logo/art1.png'
+        size_hint: 0.6, 0.6
+        pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+    MDFloatingActionButtonSpeedDial:
+        data: {"logout":"Logout", "arrow-left":"Back"}
+        callback: app.handleFloatingActionButtonSpeedDial
+        rotation_root_button: True
+        hint_animation: True
+        label_text_color: [239/255, 239/255, 239/255, 1]
+        bg_hint_color: [38/255, 50/255, 56/255, 1]
+        bg_color_stack_button: [38/255, 50/255, 56/255, 1]
+        bg_color_root_button: [38/255, 50/255, 56/255, 1]
+        color_icon_root_button: [239/255, 239/255, 239/255, 1]
+        color_icon_stack_button: [239/255, 239/255, 239/255, 1]
+    
 """
