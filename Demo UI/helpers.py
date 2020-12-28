@@ -8,6 +8,7 @@ ScreenManager:
     ContentChoice:
     ContentList:
     MoodPhotoChoice:
+    CameraPage:
 
 <AppLoad>:
     name: 'appload'
@@ -226,8 +227,8 @@ ScreenManager:
         bg_color_root_button: [38/255, 50/255, 56/255, 1]
         color_icon_root_button: [239/255, 239/255, 239/255, 1]
         color_icon_stack_button: [239/255, 239/255, 239/255, 1]
-        
-        
+
+
 <MoodPhotoChoice>:
     name: 'moodphotochoice'
     MDLabel:
@@ -243,6 +244,8 @@ ScreenManager:
         pos_hint: {'center_x': 0.5, 'center_y': 0.63}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
+        on_release:
+            app.transition('camerapage', True)
     MDRectangleFlatButton:
         text: "Choose Mood"
         pos_hint: {'center_x': 0.5, 'center_y': 0.53}
@@ -264,5 +267,19 @@ ScreenManager:
         bg_color_root_button: [38/255, 50/255, 56/255, 1]
         color_icon_root_button: [239/255, 239/255, 239/255, 1]
         color_icon_stack_button: [239/255, 239/255, 239/255, 1]
-    
+
+<CameraPage>:
+    name: 'camerapage'
+    orientation: 'vertical'
+    Camera:
+        id: camera
+        resolution: (640, 480)
+        play: True
+        index: 0
+    MDIconButton:
+        icon: "camera"
+        pos_hint: {"center_x": .5, "center_y": .2}
+        on_release:
+            root.ids.camera.export_to_png("data/capture.png")
+
 """

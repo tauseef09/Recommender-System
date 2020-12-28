@@ -42,6 +42,10 @@ class MoodPhotoChoice(Screen):
     pass
 
 
+class CameraPage(Screen):
+    pass
+
+
 sm = ScreenManager()
 sm.add_widget(AppLoad(name='appload'))
 sm.add_widget(LoginSignup(name='login_signup'))
@@ -51,6 +55,7 @@ sm.add_widget(ContentChoice(name='contentchoice'))
 sm.add_widget(MainMenu(name='mainmenu'))
 sm.add_widget(ContentList(name='contentlist'))
 sm.add_widget(MoodPhotoChoice(name='moodphotochoice'))
+sm.add_widget(CameraPage(name='camerapage'))
 
 
 class DemoUI(MDApp):
