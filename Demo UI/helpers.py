@@ -69,7 +69,7 @@ ScreenManager:
         text: "Login"
         pos_hint: {'center_x': 0.5, 'center_y': 0.25}
         on_release:
-            app.transition('contentchoice', True)
+            app.login()
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
 
@@ -116,14 +116,15 @@ ScreenManager:
         text: "Signup"
         pos_hint: {'center_x': 0.5, 'center_y': 0.25}
         on_release:
-            app.transition('contentchoice', True)
+            app.signup()
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
 
 <ContentChoice>:
     name: 'contentchoice'
     MDLabel:
-        text: "Welcome, Tauseef!"
+        id: welcome_label
+        text: "Welcome!"
         halign: 'center'
         pos_hint: {'center_y': 0.85}
         font_style: 'H4'
@@ -170,7 +171,7 @@ ScreenManager:
     name: 'mainmenu'
     MDLabel:
         id: main_menu_label
-        text: "Welcome, Tauseef!"
+        text: "Exploring!"
         halign: 'center'
         pos_hint: {'center_y': 0.85}
         font_style: 'H4'
