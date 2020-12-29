@@ -8,6 +8,7 @@ ScreenManager:
     ContentChoice:
     ContentList:
     MoodPhotoChoice:
+    ItemPage:
 
 <AppLoad>:
     name: 'appload'
@@ -214,6 +215,7 @@ ScreenManager:
 <ContentList>:
     name: 'contentlist'
     ScrollView:
+        id: scroll
         MDList:
             id: list_view
     MDFloatingActionButtonSpeedDial:
@@ -227,8 +229,8 @@ ScreenManager:
         bg_color_root_button: [38/255, 50/255, 56/255, 1]
         color_icon_root_button: [239/255, 239/255, 239/255, 1]
         color_icon_stack_button: [239/255, 239/255, 239/255, 1]
-        
-        
+
+
 <MoodPhotoChoice>:
     name: 'moodphotochoice'
     MDLabel:
@@ -265,5 +267,81 @@ ScreenManager:
         bg_color_root_button: [38/255, 50/255, 56/255, 1]
         color_icon_root_button: [239/255, 239/255, 239/255, 1]
         color_icon_stack_button: [239/255, 239/255, 239/255, 1]
-    
+
+<ItemPage>:
+    name: 'itempage'
+    MDLabel:
+        id: item
+        halign: 'center'
+        pos_hint: {'center_y': 0.90}
+        padding_x: 10
+        font_style: 'H6'
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
+    MDLabel:
+        id: userrating
+        text: 'My rating: Unrated'
+        halign: 'center'
+        pos_hint: {'center_y': 0.75}
+        padding_x: 20
+        font_style: 'Subtitle1'
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
+    MDIconButton:
+        id: 1star
+        icon: 'star'
+        theme_text_color: 'Custom'
+        text_color: 153/255, 153/255, 153/255, 1
+        pos_hint: {'center_x': 0.3, 'center_y': 0.5}
+        on_release:
+            app.change_rating_color(1)
+    MDIconButton:
+        id: 2star
+        icon: 'star'
+        theme_text_color: 'Custom'
+        text_color: 153/255, 153/255, 153/255, 1
+        pos_hint: {'center_x': 0.4, 'center_y': 0.5}
+        on_release:
+            app.change_rating_color(2)
+    MDIconButton:
+        id: 3star
+        icon: 'star'
+        theme_text_color: 'Custom'
+        text_color: 153/255, 153/255, 153/255, 1
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        on_release:
+            app.change_rating_color(3)
+    MDIconButton:
+        id: 4star
+        icon: 'star'
+        theme_text_color: 'Custom'
+        text_color: 153/255, 153/255, 153/255, 1
+        pos_hint: {'center_x': 0.6, 'center_y': 0.5}
+        on_release:
+            app.change_rating_color(4)
+    MDIconButton:
+        id: 5star
+        icon: 'star'
+        theme_text_color: 'Custom'
+        text_color: 153/255, 153/255, 153/255, 1
+        pos_hint: {'center_x': 0.7, 'center_y': 0.5}
+        on_release:
+            app.change_rating_color(5)
+    MDRectangleFlatButton:
+        text: 'Save Changes'
+        pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
+    MDFloatingActionButtonSpeedDial:
+        data: {"logout":"Logout", "arrow-left":"Back"}
+        callback: app.handleFloatingActionButtonSpeedDial
+        rotation_root_button: True
+        hint_animation: True
+        label_text_color: [239/255, 239/255, 239/255, 1]
+        bg_hint_color: [38/255, 50/255, 56/255, 1]
+        bg_color_stack_button: [38/255, 50/255, 56/255, 1]
+        bg_color_root_button: [38/255, 50/255, 56/255, 1]
+        color_icon_root_button: [239/255, 239/255, 239/255, 1]
+        color_icon_stack_button: [239/255, 239/255, 239/255, 1]
+
 """

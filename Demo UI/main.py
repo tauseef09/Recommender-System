@@ -5,6 +5,7 @@ from helpers import screens
 from kivy.core.window import Window
 from recommender import download_yr_movies, download_yr_books, download_yr_songs
 from recommender import upload_yr_movies, upload_yr_books, upload_yr_songs
+from recommender import recommend_movies, recommend_books
 from kivy.clock import Clock
 from kivymd.uix.list import MDList, OneLineListItem
 from kivymd.uix.dialog import MDDialog
@@ -49,6 +50,10 @@ class MoodPhotoChoice(Screen):
     pass
 
 
+class ItemPage(Screen):
+    pass
+
+
 sm = ScreenManager()
 sm.add_widget(AppLoad(name='appload'))
 sm.add_widget(LoginSignup(name='login_signup'))
@@ -58,6 +63,7 @@ sm.add_widget(ContentChoice(name='contentchoice'))
 sm.add_widget(MainMenu(name='mainmenu'))
 sm.add_widget(ContentList(name='contentlist'))
 sm.add_widget(MoodPhotoChoice(name='moodphotochoice'))
+sm.add_widget(ItemPage(name='itempage'))
 
 
 class DemoUI(MDApp):
@@ -67,6 +73,9 @@ class DemoUI(MDApp):
     username = ""
     password = ""
     user_id = -1
+    content_dict_movies = dict()
+    content_dict_books = dict()
+    content_dict_songs = dict()
 
     def build(self):
         self.screen = Builder.load_string(screens)
@@ -147,18 +156,43 @@ class DemoUI(MDApp):
             self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.source = "logo/art2.png"
             self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.size_hint = 0.6, 0.6
 
-    def return_content_dict(self):
-        content_dict = dict()
-        for i in range(1, 21):
-            content_dict[i] = "Item " + str(i)
-        return content_dict
-
     def show_content(self):
+        content_dict = dict()
         self.transition('contentlist', True)
-        content_dict = self.return_content_dict()
+        if self.current_content_choice == "movies":
+            if len(self.content_dict_movies) == 0:
+                self.content_dict_movies = recommend_movies(self.user_id, self.y_movies, self.r_movies)
+                content_dict = self.content_dict_movies
+            else:
+                content_dict = self.content_dict_movies
+        elif self.current_content_choice == "books":
+            if len(self.content_dict_books) == 0:
+                self.content_dict_books = recommend_books(self.user_id, self.y_books, self.r_books)
+                content_dict = self.content_dict_books
+            else:
+                content_dict = self.content_dict_books
+        else:
+            pass
+
+        i = 0
+        self.screen.get_screen('contentlist').ids.list_view.clear_widgets()
         for key, value in content_dict.items():
-            item = OneLineListItem(text=value)
+            if i == 20:
+                break
+            i += 1
+            item = OneLineListItem(text=value, on_release=self.show_item, id=str(key))
             self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
+
+    def show_item(self, obj):
+        self.screen.get_screen('itempage').ids.item.text = obj.text
+        if self.current_content_choice == "movies":
+            if self.y_movies[int(obj.id), self.user_id] != 0:
+                self.screen.get_screen('itempage').ids.userrating.text = 'My rating: ' + str(self.y_movies[int(obj.id), self.user_id])
+        elif self.current_content_choice == "books":
+            pass
+        else:
+            pass
+        self.transition('itempage', True)
 
     def transition(self, to, forward):
         # takes the screen it needs to transition to and if its a forward transition
@@ -238,6 +272,10 @@ class DemoUI(MDApp):
 
     def close_dialogue(self, obj):
         self.dialogue.dismiss()
+
+    def change_rating_color(self, rating_value):
+        if rating_value == 1:
+            self.screen.get_screen('itempage').ids.1star.text
 
     def username_is_available(self):
         available = True
