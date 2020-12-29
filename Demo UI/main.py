@@ -11,6 +11,8 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
 import numpy as np
 import json
+import threading
+import time
 
 Window.size = (330, 600)
 
@@ -75,9 +77,21 @@ class DemoUI(MDApp):
         Clock.schedule_once(self.download_and_transition, 2.5)
 
     def on_stop(self):
-        upload_yr_movies(self.y_movies, self.r_movies)
-        upload_yr_songs(self.y_songs, self.r_songs)
-        upload_yr_books(self.y_books, self.r_books)
+        thread_movies = threading.Thread(target=upload_yr_movies, args=[self.y_movies, self.r_movies])
+        thread_songs = threading.Thread(target=upload_yr_songs, args=[self.y_songs, self.r_songs])
+        thread_books = threading.Thread(target=upload_yr_books, args=[self.y_books, self.r_books])
+
+        thread_movies.start()
+        thread_songs.start()
+        thread_books.start()
+
+        thread_movies.join()
+        thread_songs.join()
+        thread_books.join()
+
+        # upload_yr_movies(self.y_movies, self.r_movies)
+        # upload_yr_songs(self.y_songs, self.r_songs)
+        # upload_yr_books(self.y_books, self.r_books)
 
     def download_and_transition(self, obj):
         self.y_movies, self.r_movies = download_yr_movies()
@@ -164,9 +178,26 @@ class DemoUI(MDApp):
             self.screen.get_screen('signup').ids.signup_lastname_textfield.text = ""
             self.screen.get_screen('signup').ids.signup_username_textfield.text = ""
             self.screen.get_screen('signup').ids.signup_password_textfield.text = ""
-            upload_yr_movies(self.y_movies, self.r_movies)
-            upload_yr_songs(self.y_songs, self.r_songs)
-            upload_yr_books(self.y_books, self.r_books)
+
+            start = time.perf_counter()
+            thread_movies = threading.Thread(target=upload_yr_movies, args=[self.y_movies, self.r_movies])
+            thread_songs = threading.Thread(target=upload_yr_songs, args=[self.y_songs, self.r_songs])
+            thread_books = threading.Thread(target=upload_yr_books, args=[self.y_books, self.r_books])
+
+            thread_movies.start()
+            thread_songs.start()
+            thread_books.start()
+
+            thread_movies.join()
+            thread_songs.join()
+            thread_books.join()
+
+            # upload_yr_movies(self.y_movies, self.r_movies)
+            # upload_yr_songs(self.y_songs, self.r_songs)
+            # upload_yr_books(self.y_books, self.r_books)
+
+            finish = time.perf_counter()
+            print(f'Finished in {round(finish - start, 2)} second(s)')
             self.transition('login_signup', True)
 
     def signup(self):
@@ -184,7 +215,7 @@ class DemoUI(MDApp):
 
         if self.first_name.split() == [] or self.last_name.split() == [] or self.username.split() == [] or self.password.split() == []:
             cancel_btn_dialogue = MDFlatButton(text="Retry", on_release=self.close_dialogue)
-            self.dialogue = MDDialog(title="Invalid Info", text="Please enter valid information and password",
+            self.dialogue = MDDialog(title="Invalid Info", text="Please enter valid information and password.",
                                      size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
             self.dialogue.open()
         else:
@@ -272,7 +303,7 @@ class DemoUI(MDApp):
 
         if self.username.split() == [] or self.password.split() == []:
             cancel_btn_dialogue = MDFlatButton(text="Retry", on_release=self.close_dialogue)
-            self.dialogue = MDDialog(title="Invalid Info", text="Please enter valid username and password",
+            self.dialogue = MDDialog(title="Invalid Info", text="Please enter valid username and password.",
                                      size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
             self.dialogue.open()
         else:
