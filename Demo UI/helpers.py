@@ -287,6 +287,13 @@ ScreenManager:
         font_style: 'Subtitle1'
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
+    MDLabel:
+        text: 'Rate:'
+        halign: 'center'
+        pos_hint: {'center_y': 0.57}
+        font_style: 'Subtitle1'
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
     MDIconButton:
         id: star1
         icon: 'star'
