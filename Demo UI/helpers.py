@@ -9,6 +9,7 @@ ScreenManager:
     ContentList:
     MoodPhotoChoice:
     ItemPage:
+    CameraPage:
 
 <AppLoad>:
     name: 'appload'
@@ -246,6 +247,8 @@ ScreenManager:
         pos_hint: {'center_x': 0.5, 'center_y': 0.63}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
+        on_release:
+            app.transition('camerapage', True)
     MDRectangleFlatButton:
         text: "Choose Mood"
         pos_hint: {'center_x': 0.5, 'center_y': 0.53}
@@ -353,4 +356,28 @@ ScreenManager:
         color_icon_root_button: [239/255, 239/255, 239/255, 1]
         color_icon_stack_button: [239/255, 239/255, 239/255, 1]
 
+<CameraPage>:
+    name: 'camerapage'
+    orientation: 'vertical'
+    Camera:
+        id: camera
+        resolution: (640, 480)
+        play: True
+        index: 0
+    MDIconButton:
+        icon: "camera"
+        pos_hint: {"center_x": .5, "center_y": .2}
+        on_release:
+            app.get_mood()
+    MDFloatingActionButtonSpeedDial:
+        data: {"logout":"Logout", "arrow-left":"Back"}
+        callback: app.handleFloatingActionButtonSpeedDial
+        rotation_root_button: True
+        hint_animation: True
+        label_text_color: [239/255, 239/255, 239/255, 1]
+        bg_hint_color: [38/255, 50/255, 56/255, 1]
+        bg_color_stack_button: [38/255, 50/255, 56/255, 1]
+        bg_color_root_button: [38/255, 50/255, 56/255, 1]
+        color_icon_root_button: [239/255, 239/255, 239/255, 1]
+        color_icon_stack_button: [239/255, 239/255, 239/255, 1]
 """
