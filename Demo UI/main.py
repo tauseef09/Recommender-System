@@ -5,7 +5,7 @@ from helpers import screens
 from kivy.core.window import Window
 from recommender import download_yr_movies, download_yr_books, download_yr_songs
 from recommender import upload_yr_movies, upload_yr_books, upload_yr_songs
-from recommender import recommend_movies, recommend_books
+from recommender import recommend_movies, recommend_books, rate
 from kivy.clock import Clock
 from kivymd.uix.list import MDList, OneLineListItem
 from kivymd.uix.dialog import MDDialog
@@ -76,6 +76,8 @@ class DemoUI(MDApp):
     content_dict_movies = dict()
     content_dict_books = dict()
     content_dict_songs = dict()
+    current_item_id = -1
+    current_item_rating = 0
 
     def build(self):
         self.screen = Builder.load_string(screens)
@@ -184,12 +186,20 @@ class DemoUI(MDApp):
             self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
 
     def show_item(self, obj):
+        self.current_item_id = int(obj.id)
         self.screen.get_screen('itempage').ids.item.text = obj.text
         if self.current_content_choice == "movies":
             if self.y_movies[int(obj.id), self.user_id] != 0:
                 self.screen.get_screen('itempage').ids.userrating.text = 'My rating: ' + str(self.y_movies[int(obj.id), self.user_id])
+                self.change_rating_color(self.y_movies[int(obj.id), self.user_id])
+            else:
+                self.change_rating_color(0)
         elif self.current_content_choice == "books":
-            pass
+            if self.y_books[int(obj.id), self.user_id] != 0:
+                self.screen.get_screen('itempage').ids.userrating.text = 'My rating: ' + str(self.y_books[int(obj.id), self.user_id])
+                self.change_rating_color(self.y_books[int(obj.id), self.user_id])
+            else:
+                self.change_rating_color(0)
         else:
             pass
         self.transition('itempage', True)
@@ -201,6 +211,8 @@ class DemoUI(MDApp):
             self.previousScreen.append(self.screen.current)
             self.screen.current = to
         else:
+            self.current_item_id = -1
+            self.current_item_rating = 0
             self.screen.transition.direction = 'right'
             self.screen.current = self.previousScreen.pop()  # for going back it does not need a destination
 
@@ -274,8 +286,43 @@ class DemoUI(MDApp):
         self.dialogue.dismiss()
 
     def change_rating_color(self, rating_value):
+        self.current_item_rating = rating_value
         if rating_value == 1:
-            self.screen.get_screen('itempage').ids.1star.text
+            self.screen.get_screen('itempage').ids.star1.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star2.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+            self.screen.get_screen('itempage').ids.star3.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+            self.screen.get_screen('itempage').ids.star4.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+            self.screen.get_screen('itempage').ids.star5.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+        elif rating_value == 2:
+            self.screen.get_screen('itempage').ids.star1.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star2.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star3.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+            self.screen.get_screen('itempage').ids.star4.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+            self.screen.get_screen('itempage').ids.star5.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+        elif rating_value == 3:
+            self.screen.get_screen('itempage').ids.star1.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star2.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star3.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star4.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+            self.screen.get_screen('itempage').ids.star5.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+        elif rating_value == 4:
+            self.screen.get_screen('itempage').ids.star1.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star2.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star3.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star4.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star5.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+        elif rating_value == 5:
+            self.screen.get_screen('itempage').ids.star1.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star2.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star3.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star4.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+            self.screen.get_screen('itempage').ids.star5.text_color = 77 / 255, 148 / 255, 255 / 255, 1
+        else:
+            self.screen.get_screen('itempage').ids.star1.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+            self.screen.get_screen('itempage').ids.star2.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+            self.screen.get_screen('itempage').ids.star3.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+            self.screen.get_screen('itempage').ids.star4.text_color = 153 / 255, 153 / 255, 153 / 255, 1
+            self.screen.get_screen('itempage').ids.star5.text_color = 153 / 255, 153 / 255, 153 / 255, 1
 
     def username_is_available(self):
         available = True
@@ -378,6 +425,17 @@ class DemoUI(MDApp):
                 self.first_name = item['first_name']
                 self.last_name = item['last_name']
                 self.user_id = item['user_id']
+
+    def save_rating_changes(self):
+        if self.current_item_id != -1 and self.current_item_rating != 0:
+            if self.current_content_choice == "movies":
+                self.y_movies, self.r_movies = rate(self.current_item_id, self.user_id, self.y_movies, self.r_movies,
+                                                    self.current_item_rating)
+            elif self.current_content_choice == "books":
+                self.y_books, self.r_books = rate(self.current_item_id, self.user_id, self.y_books, self.r_books,
+                                                  self.current_item_rating)
+            else:
+                pass
 
 
 DemoUI().run()

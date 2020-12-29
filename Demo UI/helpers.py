@@ -288,7 +288,7 @@ ScreenManager:
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
     MDIconButton:
-        id: 1star
+        id: star1
         icon: 'star'
         theme_text_color: 'Custom'
         text_color: 153/255, 153/255, 153/255, 1
@@ -296,7 +296,7 @@ ScreenManager:
         on_release:
             app.change_rating_color(1)
     MDIconButton:
-        id: 2star
+        id: star2
         icon: 'star'
         theme_text_color: 'Custom'
         text_color: 153/255, 153/255, 153/255, 1
@@ -304,7 +304,7 @@ ScreenManager:
         on_release:
             app.change_rating_color(2)
     MDIconButton:
-        id: 3star
+        id: star3
         icon: 'star'
         theme_text_color: 'Custom'
         text_color: 153/255, 153/255, 153/255, 1
@@ -312,7 +312,7 @@ ScreenManager:
         on_release:
             app.change_rating_color(3)
     MDIconButton:
-        id: 4star
+        id: star4
         icon: 'star'
         theme_text_color: 'Custom'
         text_color: 153/255, 153/255, 153/255, 1
@@ -320,7 +320,7 @@ ScreenManager:
         on_release:
             app.change_rating_color(4)
     MDIconButton:
-        id: 5star
+        id: star5
         icon: 'star'
         theme_text_color: 'Custom'
         text_color: 153/255, 153/255, 153/255, 1
@@ -332,6 +332,8 @@ ScreenManager:
         pos_hint: {'center_x': 0.5, 'center_y': 0.3}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
+        on_release:
+            app.save_rating_changes()
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
         callback: app.handleFloatingActionButtonSpeedDial

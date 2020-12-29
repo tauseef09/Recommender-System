@@ -324,3 +324,11 @@ def recommend_music(userID, y, r):
         suggested_movie_dict[key] = movieList[key]
 
     return suggested_movie_dict
+
+
+def rate(item_id, user_id, y, r, rating):
+    # allows user to rate certain items
+    # updating y and r based on the user's rating on item_id
+    y[item_id, user_id] = rating
+    r = (y != 0) * 1
+    return y, r
