@@ -182,7 +182,8 @@ class DemoUI(MDApp):
             if i == 20:
                 break
             i += 1
-            item = OneLineListItem(text=value, on_release=self.show_item, id=str(key))
+            item = OneLineListItem(text=value, on_release=self.show_item)
+            item.id = str(key)
             self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
 
     def show_item(self, obj):
