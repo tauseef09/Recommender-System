@@ -70,9 +70,3 @@ def detect_mood(img_src, model):
             print(emotion_dict[maxindex])  # returns the detected emotion
     else:
         print("No faces detected")
-
-    # cv2.imshow('demo', image)
-    # while cv2.getWindowProperty('demo', 0) >= 0:
-    #     if cv2.waitKey(1) > 0:
-    #         break
-    # cv2.destroyAllWindows()

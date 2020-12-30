@@ -377,6 +377,7 @@ ScreenManager:
         icon: "camera"
         pos_hint: {"center_x": .5, "center_y": .35}
         on_release:
+            root.ids.warning.text: 'Please Wait...'
             app.get_mood()
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}

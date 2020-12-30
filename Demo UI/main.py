@@ -190,7 +190,8 @@ class DemoUI(MDApp):
             if i == 20:
                 break
             i += 1
-            item = OneLineListItem(text=value, on_release=self.show_item, id=str(key))
+            item = OneLineListItem(text=value, on_release=self.show_item)
+            item.id = str(key)
             self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
 
     def show_item(self, obj):
@@ -446,10 +447,8 @@ class DemoUI(MDApp):
                 pass
 
     def get_mood(self):
-        self.screen.get_screen('camerapage').ids.warning.text = "Please Wait..."
         if take_photo():
             detect_mood("data/capture.png", self.model)
-        # self.screen.get_screen('camerapage').ids.warning.text = ""
 
 
 DemoUI().run()
