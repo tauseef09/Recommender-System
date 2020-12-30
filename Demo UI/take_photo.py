@@ -67,6 +67,6 @@ def detect_mood(img_src, model):
             cropped_img = np.expand_dims(np.expand_dims(cv2.resize(roi_gray, (48, 48)), -1), 0)
             prediction = model.predict(cropped_img)
             maxindex = int(np.argmax(prediction))
-            print(emotion_dict[maxindex])  # returns the detected emotion
+            return emotion_dict[maxindex]  # returns the detected emotion
     else:
-        print("No faces detected")
+        return "No faces detected"
