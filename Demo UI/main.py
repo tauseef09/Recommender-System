@@ -6,6 +6,8 @@ from kivy.core.window import Window
 from recommender import download_yr_movies, download_yr_books, download_yr_songs
 from recommender import upload_yr_movies, upload_yr_books, upload_yr_songs
 from recommender import recommend_movies, recommend_books, rate
+from preload_model import preload_model
+from take_photo import detect_mood, take_photo
 from kivy.clock import Clock
 from kivymd.uix.list import MDList, OneLineListItem
 from kivymd.uix.dialog import MDDialog
@@ -54,6 +56,10 @@ class ItemPage(Screen):
     pass
 
 
+class CameraPage(Screen):
+    pass
+
+
 sm = ScreenManager()
 sm.add_widget(AppLoad(name='appload'))
 sm.add_widget(LoginSignup(name='login_signup'))
@@ -64,6 +70,7 @@ sm.add_widget(MainMenu(name='mainmenu'))
 sm.add_widget(ContentList(name='contentlist'))
 sm.add_widget(MoodPhotoChoice(name='moodphotochoice'))
 sm.add_widget(ItemPage(name='itempage'))
+sm.add_widget(CameraPage(name='camerapage'))
 
 
 class DemoUI(MDApp):
@@ -105,6 +112,7 @@ class DemoUI(MDApp):
         # upload_yr_books(self.y_books, self.r_books)
 
     def download_and_transition(self, obj):
+        self.model = preload_model()
         self.y_movies, self.r_movies = download_yr_movies()
         self.screen.get_screen('appload').ids.progress_bar.value = 33
         # print(self.y_movies.shape)
@@ -182,7 +190,8 @@ class DemoUI(MDApp):
             if i == 20:
                 break
             i += 1
-            item = OneLineListItem(text=value, on_release=self.show_item, id=str(key))
+            item = OneLineListItem(text=value, on_release=self.show_item)
+            item.id = str(key)
             self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
 
     def show_item(self, obj):
@@ -436,6 +445,10 @@ class DemoUI(MDApp):
                                                   self.current_item_rating)
             else:
                 pass
+
+    def get_mood(self):
+        if take_photo():
+            detect_mood("data/capture.png", self.model)
 
 
 DemoUI().run()
