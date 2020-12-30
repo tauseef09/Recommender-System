@@ -182,11 +182,12 @@ class DemoUI(MDApp):
             if i == 20:
                 break
             i += 1
-            item = OneLineListItem(text=value, on_release=self.show_item, id=str(key))
+            item = OneLineListItem(text=value, on_release=self.show_item), id=str(key))
             self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
 
     def show_item(self, obj):
         self.current_item_id = int(obj.id)
+        print(obj.id)
         self.screen.get_screen('itempage').ids.item.text = obj.text
         if self.current_content_choice == "movies":
             if self.y_movies[int(obj.id), self.user_id] != 0:
