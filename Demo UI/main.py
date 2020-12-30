@@ -5,7 +5,8 @@ from helpers import screens
 from kivy.core.window import Window
 from recommender import download_yr_movies, download_yr_books, download_yr_songs
 from recommender import upload_yr_movies, upload_yr_books, upload_yr_songs
-from recommender import recommend_movies, recommend_books, rate
+from recommender import recommend_movies, recommend_books, recommend_songs, rate
+from recommender import filter_content_movies, filter_content_books, filter_content_songs
 from preload_model import preload_model
 from take_photo import detect_mood, take_photo
 from kivy.clock import Clock
@@ -60,6 +61,10 @@ class CameraPage(Screen):
     pass
 
 
+class MoodChoice(Screen):
+    pass
+
+
 sm = ScreenManager()
 sm.add_widget(AppLoad(name='appload'))
 sm.add_widget(LoginSignup(name='login_signup'))
@@ -71,6 +76,7 @@ sm.add_widget(ContentList(name='contentlist'))
 sm.add_widget(MoodPhotoChoice(name='moodphotochoice'))
 sm.add_widget(ItemPage(name='itempage'))
 sm.add_widget(CameraPage(name='camerapage'))
+sm.add_widget(MoodChoice(name='moodchoice'))
 
 
 class DemoUI(MDApp):
@@ -182,7 +188,11 @@ class DemoUI(MDApp):
             else:
                 content_dict = self.content_dict_books
         else:
-            pass
+            if len(self.content_dict_songs) == 0:
+                self.content_dict_songs = recommend_songs(self.user_id, self.y_songs, self.r_songs)
+                content_dict = self.content_dict_songs
+            else:
+                content_dict = self.content_dict_songs
 
         i = 0
         self.screen.get_screen('contentlist').ids.list_view.clear_widgets()
@@ -210,7 +220,11 @@ class DemoUI(MDApp):
             else:
                 self.change_rating_color(0)
         else:
-            pass
+            if self.y_songs[int(obj.id), self.user_id] != 0:
+                self.screen.get_screen('itempage').ids.userrating.text = 'My rating: ' + str(self.y_songs[int(obj.id), self.user_id])
+                self.change_rating_color(self.y_songs[int(obj.id), self.user_id])
+            else:
+                self.change_rating_color(0)
         self.transition('itempage', True)
 
     def transition(self, to, forward):
@@ -444,11 +458,57 @@ class DemoUI(MDApp):
                 self.y_books, self.r_books = rate(self.current_item_id, self.user_id, self.y_books, self.r_books,
                                                   self.current_item_rating)
             else:
-                pass
+                self.y_songs, self.r_songs = rate(self.current_item_id, self.user_id, self.y_songs, self.r_songs,
+                                                  self.current_item_rating)
 
     def get_mood(self):
         if take_photo():
-            detect_mood("data/capture.png", self.model)
+            mood = detect_mood("data/capture.png", self.model)
+            if mood != "No faces detected":
+                self.mood_filter(mood)
+            else:
+                cancel_btn_dialogue = MDFlatButton(text="Retry", on_release=self.close_dialogue)
+                self.dialogue = MDDialog(title="No Faces Detected", text="Please check if there is sufficient light.",
+                                         size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
+                self.dialogue.open()
+
+    def mood_filter(self, mood):
+        content_dict = dict()
+        self.transition('contentlist', True)
+        if self.current_content_choice == "movies":
+            if len(self.content_dict_movies) == 0:
+                self.content_dict_movies = recommend_movies(self.user_id, self.y_movies, self.r_movies)
+                content_dict = self.content_dict_movies
+                content_dict = filter_content_movies(mood, content_dict)
+            else:
+                content_dict = self.content_dict_movies
+                content_dict = filter_content_movies(mood, content_dict)
+        elif self.current_content_choice == "books":
+            if len(self.content_dict_books) == 0:
+                self.content_dict_books = recommend_books(self.user_id, self.y_books, self.r_books)
+                content_dict = self.content_dict_books
+                content_dict = filter_content_books(mood, content_dict)
+            else:
+                content_dict = self.content_dict_books
+                content_dict = filter_content_books(mood, content_dict)
+        else:
+            if len(self.content_dict_songs) == 0:
+                self.content_dict_songs = recommend_songs(self.user_id, self.y_songs, self.r_songs)
+                content_dict = self.content_dict_songs
+                content_dict = filter_content_songs(mood, content_dict)
+            else:
+                content_dict = self.content_dict_songs
+                content_dict = filter_content_songs(mood, content_dict)
+
+        i = 0
+        self.screen.get_screen('contentlist').ids.list_view.clear_widgets()
+        for key, value in content_dict.items():
+            if i == 20:
+                break
+            i += 1
+            item = OneLineListItem(text=value, on_release=self.show_item)
+            item.id = str(key)
+            self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
 
 
 DemoUI().run()

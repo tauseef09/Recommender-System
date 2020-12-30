@@ -253,9 +253,9 @@ def recommend_books(userID, y, r):
     return suggested_movie_dict
 
 
-def recommend_music(userID, y, r):
+def recommend_songs(userID, y, r):
     # creating the movie list from the movie_ids csv file
-    movieList = pd.read_csv('data/movie_ids.csv')["name"].to_list()
+    movieList = pd.read_csv('data/song_ids.csv')["name"].to_list()
     n = return_features()  # retrieving the number of features
 
     # creating the user's rating vector and r vector
@@ -332,3 +332,42 @@ def rate(item_id, user_id, y, r, rating):
     y[item_id, user_id] = rating
     r = (y != 0) * 1
     return y, r
+
+
+def filter_content_movies(user_mood, suggested_content_dict):
+    df = pd.read_csv('data/movie_ids.csv')
+
+    # filters the dataframe based on user_mood and user_likes dictionary
+    filt = (df.apply(lambda row: user_mood in row["mood"], axis=1)) & (df['id'].isin(suggested_content_dict.keys()))
+    df_filtered = df[["id", "name"]][filt]
+
+    # filtered dictionary that has to be returned
+    mood_filtered_dict = dict()
+    mood_filtered_dict = df_filtered.set_index('id').T.to_dict('records')[0]
+    return mood_filtered_dict
+
+
+def filter_content_books(user_mood, suggested_content_dict):
+    df = pd.read_csv('data/book_ids.csv')
+
+    # filters the dataframe based on user_mood and user_likes dictionary
+    filt = (df.apply(lambda row: user_mood in row["mood"], axis=1)) & (df['id'].isin(suggested_content_dict.keys()))
+    df_filtered = df[["id", "name"]][filt]
+
+    # filtered dictionary that has to be returned
+    mood_filtered_dict = dict()
+    mood_filtered_dict = df_filtered.set_index('id').T.to_dict('records')[0]
+    return mood_filtered_dict
+
+
+def filter_content_songs(user_mood, suggested_content_dict):
+    df = pd.read_csv('data/song_ids.csv')
+
+    # filters the dataframe based on user_mood and user_likes dictionary
+    filt = (df.apply(lambda row: user_mood in row["mood"], axis=1)) & (df['id'].isin(suggested_content_dict.keys()))
+    df_filtered = df[["id", "name"]][filt]
+
+    # filtered dictionary that has to be returned
+    mood_filtered_dict = dict()
+    mood_filtered_dict = df_filtered.set_index('id').T.to_dict('records')[0]
+    return mood_filtered_dict
