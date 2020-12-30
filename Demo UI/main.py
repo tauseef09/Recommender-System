@@ -7,7 +7,7 @@ from recommender import download_yr_movies, download_yr_books, download_yr_songs
 from recommender import upload_yr_movies, upload_yr_books, upload_yr_songs
 from recommender import recommend_movies, recommend_books, rate
 from preload_model import preload_model
-from take_photo import detect_mood
+from take_photo import detect_mood, take_photo
 from kivy.clock import Clock
 from kivymd.uix.list import MDList, OneLineListItem
 from kivymd.uix.dialog import MDDialog
@@ -446,8 +446,10 @@ class DemoUI(MDApp):
                 pass
 
     def get_mood(self):
-        self.screen.get_screen('camerapage').ids.camera.export_to_png("data/capture.png")
-        detect_mood("data/capture.png", self.model)
+        self.screen.get_screen('camerapage').ids.warning.text = "Please Wait..."
+        if take_photo():
+            detect_mood("data/capture.png", self.model)
+        # self.screen.get_screen('camerapage').ids.warning.text = ""
 
 
 DemoUI().run()

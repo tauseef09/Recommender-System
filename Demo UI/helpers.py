@@ -358,15 +358,24 @@ ScreenManager:
 
 <CameraPage>:
     name: 'camerapage'
-    orientation: 'vertical'
-    Camera:
-        id: camera
-        resolution: (640, 480)
-        play: True
-        index: 0
+    MDLabel:
+        text: 'Press Spacebar to take picture. Press esc to quit from camera'
+        halign: 'center'
+        pos_hint: {'center_y': 0.7}
+        font_style: 'Subtitle1'
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
+    MDLabel:
+        id: warning
+        text: ''
+        halign: 'center'
+        pos_hint: {'center_y': 0.5}
+        font_style: 'Subtitle1'
+        theme_text_color: 'Custom'
+        text_color: 38/255, 50/255, 56/255, 1
     MDIconButton:
         icon: "camera"
-        pos_hint: {"center_x": .5, "center_y": .2}
+        pos_hint: {"center_x": .5, "center_y": .35}
         on_release:
             app.get_mood()
     MDFloatingActionButtonSpeedDial:

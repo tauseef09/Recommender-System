@@ -5,43 +5,47 @@ import numpy as np
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 
-# def take_photo():
-#     """This function will open the camera and take a picture. Press esc to quit and space bar to take picture"""
+def take_photo():
+    """This function will open the camera and take a picture. Press esc to quit and space bar to take picture"""
 
-#     # prevents openCL usage and unnecessary logging messages
-#     cv2.ocl.setUseOpenCL(False)
+    # prevents openCL usage and unnecessary logging messages
+    cv2.ocl.setUseOpenCL(False)
 
-#     # start camera feed
-#     camera = cv2.VideoCapture(0)  # The integer is the index of the user's camera
+    # start camera feed
+    camera = cv2.VideoCapture(0)  # The integer is the index of the user's camera
 
-#     while True:
-#         ret, frame = camera.read()  # ret is just a confirmation and frame is the image frame captured
-#         if not ret:
-#             print("Failed to capture image! Aborting!")
-#             break
+    capture_success = False
 
-#         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # makes it grayscale
-#         faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)  # returns the faces detected as (x, y, w, h)
+    while True:
+        ret, frame = camera.read()  # ret is just a confirmation and frame is the image frame captured
+        if not ret:
+            print("Failed to capture image! Aborting!")
+            break
 
-#         for(x, y, w, h) in faces:
-#             cv2.rectangle(frame, (x, y - 50), (x + w, y + h + 10), (255, 0, 0), 2)  # drawing an rectangle on the original colored frame
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # makes it grayscale
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)  # returns the faces detected as (x, y, w, h)
 
-#         cv2.imshow('Camera', cv2.resize(frame, (1250, 800)))
+        for(x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y - 50), (x + w, y + h + 10), (255, 0, 0), 2)  # drawing an rectangle on the original colored frame
 
-#         key = cv2.waitKey(1)
-#         if key % 256 == 27:
-#             break  # esc is pressed. Quitting function
-#         elif key % 256 == 32:
-#             # space bar is pressed and saving the current frame
-#             # the dir of the file is hardcoded for now
-#             if cv2.imwrite('capture.png', frame):
-#                 print("Capture Succesfull")
-#                 break
-#             else:
-#                 print("Could not capture")
+        cv2.imshow('Camera', cv2.resize(frame, (700, 500)))
 
-#     camera.release()
-#     cv2.destroyAllWindows()
+        key = cv2.waitKey(1)
+        if key % 256 == 27:
+            break  # esc is pressed. Quitting function
+        elif key % 256 == 32:
+            # space bar is pressed and saving the current frame
+            # the dir of the file is hardcoded for now
+            if cv2.imwrite('data/capture.png', frame):
+                print("Capture Succesfull")
+                capture_success = True
+                break
+            else:
+                print("Could not capture")
+
+    camera.release()
+    cv2.destroyAllWindows()
+    return capture_success
 
 
 def detect_mood(img_src, model):
@@ -67,5 +71,8 @@ def detect_mood(img_src, model):
     else:
         print("No faces detected")
 
+    # cv2.imshow('demo', image)
+    # while cv2.getWindowProperty('demo', 0) >= 0:
+    #     if cv2.waitKey(1) > 0:
+    #         break
     # cv2.destroyAllWindows()
-    return
