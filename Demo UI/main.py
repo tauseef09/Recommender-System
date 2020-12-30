@@ -5,6 +5,7 @@ from helpers import screens
 from kivy.core.window import Window
 from recommender import download_yr_movies, download_yr_books, download_yr_songs
 from recommender import upload_yr_movies, upload_yr_books, upload_yr_songs
+from recommender import create_movies_dict, create_songs_dict, create_books_dict
 from recommender import recommend_movies, recommend_books, recommend_songs, rate
 from recommender import filter_content_movies, filter_content_books, filter_content_songs
 from preload_model import preload_model
@@ -65,6 +66,10 @@ class MoodChoice(Screen):
     pass
 
 
+class Search(Screen):
+    pass
+
+
 sm = ScreenManager()
 sm.add_widget(AppLoad(name='appload'))
 sm.add_widget(LoginSignup(name='login_signup'))
@@ -77,6 +82,7 @@ sm.add_widget(MoodPhotoChoice(name='moodphotochoice'))
 sm.add_widget(ItemPage(name='itempage'))
 sm.add_widget(CameraPage(name='camerapage'))
 sm.add_widget(MoodChoice(name='moodchoice'))
+sm.add_widget(Search(name='search'))
 
 
 class DemoUI(MDApp):
@@ -89,6 +95,9 @@ class DemoUI(MDApp):
     content_dict_movies = dict()
     content_dict_books = dict()
     content_dict_songs = dict()
+    movie_dict = dict()
+    song_dict = dict()
+    book_dict = dict()
     current_item_id = -1
     current_item_rating = 0
 
@@ -120,16 +129,19 @@ class DemoUI(MDApp):
     def download_and_transition(self, obj):
         self.model = preload_model()
         self.y_movies, self.r_movies = download_yr_movies()
+        self.movie_dict = create_movies_dict()
         self.screen.get_screen('appload').ids.progress_bar.value = 33
         # print(self.y_movies.shape)
         # print(self.r_movies.shape)
 
         self.y_books, self.r_books = download_yr_books()
+        self.book_dict = create_books_dict()
         self.screen.get_screen('appload').ids.progress_bar.value = 66
         # print(self.y_books.shape)
         # print(self.r_books.shape)
 
         self.y_songs, self.r_songs = download_yr_songs()
+        self.song_dict = create_songs_dict()
         self.screen.get_screen('appload').ids.progress_bar.value = 99
         # print(self.y_songs.shape)
         # print(self.r_songs.shape)
@@ -207,6 +219,7 @@ class DemoUI(MDApp):
     def show_item(self, obj):
         self.current_item_id = int(obj.id)
         self.screen.get_screen('itempage').ids.item.text = obj.text
+        self.screen.get_screen('itempage').ids.userrating.text = 'My rating: Unrated'
         if self.current_content_choice == "movies":
             if self.y_movies[int(obj.id), self.user_id] != 0:
                 self.screen.get_screen('itempage').ids.userrating.text = 'My rating: ' + str(self.y_movies[int(obj.id), self.user_id])
@@ -236,6 +249,7 @@ class DemoUI(MDApp):
         else:
             self.current_item_id = -1
             self.current_item_rating = 0
+            self.screen.get_screen('search').ids.search_field.text = ""
             self.screen.transition.direction = 'right'
             self.screen.current = self.previousScreen.pop()  # for going back it does not need a destination
 
@@ -509,6 +523,26 @@ class DemoUI(MDApp):
             item = OneLineListItem(text=value, on_release=self.show_item)
             item.id = str(key)
             self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
+
+    def search_item(self, searching):
+        if self.current_content_choice == "movies":
+            demo_dict = self.movie_dict
+        elif self.current_content_choice == "songs":
+            demo_dict = self.song_dict
+        else:
+            demo_dict = self.book_dict
+
+        self.screen.get_screen('search').ids.search_list_view.clear_widgets()
+        search_key = ""
+        search_key = self.screen.get_screen('search').ids.search_field.text
+        i = 0
+        for key, value in demo_dict.items():
+            if searching and search_key != "":
+                if search_key in value and i <= 20:
+                    i += 1
+                    item = OneLineListItem(text=value, on_release=self.show_item)
+                    item.id = str(key)
+                    self.screen.get_screen('search').ids.search_list_view.add_widget(item)
 
 
 DemoUI().run()

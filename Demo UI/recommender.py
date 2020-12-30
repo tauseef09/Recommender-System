@@ -371,3 +371,27 @@ def filter_content_songs(user_mood, suggested_content_dict):
     mood_filtered_dict = dict()
     mood_filtered_dict = df_filtered.set_index('id').T.to_dict('records')[0]
     return mood_filtered_dict
+
+
+def create_movies_dict():
+    movieList = pd.read_csv('data/movie_ids.csv')["name"].to_list()
+    demo_dict = dict()
+    for i in range(len(movieList)):
+        demo_dict[i] = movieList[i]
+    return demo_dict
+
+
+def create_songs_dict():
+    songList = pd.read_csv('data/song_ids.csv')["name"].to_list()
+    demo_dict = dict()
+    for i in range(len(songList)):
+        demo_dict[i] = songList[i]
+    return demo_dict
+
+
+def create_books_dict():
+    bookList = pd.read_csv('data/book_ids.csv')["name"].to_list()
+    demo_dict = dict()
+    for i in range(len(bookList)):
+        demo_dict[i] = bookList[i]
+    return demo_dict

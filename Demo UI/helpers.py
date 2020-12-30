@@ -11,6 +11,7 @@ ScreenManager:
     ItemPage:
     CameraPage:
     MoodChoice:
+    Search:
 
 <AppLoad>:
     name: 'appload'
@@ -197,6 +198,8 @@ ScreenManager:
         pos_hint: {'center_x': 0.5, 'center_y': 0.43}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
+        on_release:
+            app.transition('search', True)
     Image:
         id: art
         source: 'logo/art1.png'
@@ -444,6 +447,39 @@ ScreenManager:
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
             app.mood_filter('Neutral')
+    MDFloatingActionButtonSpeedDial:
+        data: {"logout":"Logout", "arrow-left":"Back"}
+        callback: app.handleFloatingActionButtonSpeedDial
+        rotation_root_button: True
+        hint_animation: True
+        label_text_color: [239/255, 239/255, 239/255, 1]
+        bg_hint_color: [38/255, 50/255, 56/255, 1]
+        bg_color_stack_button: [38/255, 50/255, 56/255, 1]
+        bg_color_root_button: [38/255, 50/255, 56/255, 1]
+        color_icon_root_button: [239/255, 239/255, 239/255, 1]
+        color_icon_stack_button: [239/255, 239/255, 239/255, 1]
+<Search>:
+    name: 'search'
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: dp(10)
+        padding: dp(20)
+        BoxLayout:
+            size_hint_y: None
+            height: self.minimum_height
+
+            MDIconButton:
+                icon: 'magnify'
+
+            MDTextField:
+                id: search_field
+                hint_text: 'Search content'
+                on_text:
+                    app.search_item(True)
+        ScrollView:
+            id: search_scroll
+            MDList:
+                id: search_list_view
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
         callback: app.handleFloatingActionButtonSpeedDial
