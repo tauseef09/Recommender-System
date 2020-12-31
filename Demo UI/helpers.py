@@ -84,10 +84,10 @@ ScreenManager:
     Image:
         source: 'logo/logo.png'
         size_hint: 0.23, 0.23
-        pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.85}
     MDTextField:
         id: signup_firstname_textfield
-        pos_hint: {'center_x': 0.5, 'center_y': 0.76}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.66}
         size_hint: (0.7, 0.1)
         hint_text: "First Name"
         helper_text: "Required"
@@ -95,7 +95,7 @@ ScreenManager:
         required: True
     MDTextField:
         id: signup_lastname_textfield
-        pos_hint: {'center_x': 0.5, 'center_y': 0.64}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.54}
         size_hint: (0.7, 0.1)
         hint_text: "Last Name"
         helper_text: "Required"
@@ -103,7 +103,7 @@ ScreenManager:
         required: True
     MDTextField:
         id: signup_username_textfield
-        pos_hint: {'center_x': 0.5, 'center_y': 0.52}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.42}
         size_hint: (0.7, 0.1)
         hint_text: "Username"
         helper_text: "Required"
@@ -111,7 +111,7 @@ ScreenManager:
         required: True
     MDTextField:
         id: signup_password_textfield
-        pos_hint: {'center_x': 0.5, 'center_y': 0.40}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.30}
         size_hint: (0.7, 0.1)
         hint_text: "Password"
         helper_text: "Required"
@@ -120,7 +120,7 @@ ScreenManager:
         password: True
     MDRectangleFlatButton:
         text: "Signup"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.25}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.15}
         on_release:
             app.signup()
         theme_text_color: 'Custom'
