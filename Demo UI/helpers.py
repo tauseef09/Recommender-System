@@ -30,17 +30,18 @@ ScreenManager:
     Image:
         source: 'logo/logo.png'
         size: self.texture_size
+        size_hint: 0.5, 0.5
         pos_hint: {'center_x': 0.5, 'center_y': 0.7}
     MDRectangleFlatButton:
         text: 'Login'
-        pos_hint: {'center_x': 0.5, 'center_y': 0.35}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.45}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
             app.transition('login', True)
     MDRectangleFlatButton:
         text: 'Signup'
-        pos_hint: {'center_x': 0.5, 'center_y': 0.25}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.35}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
@@ -50,8 +51,8 @@ ScreenManager:
     name: 'login'
     Image:
         source: 'logo/logo.png'
-        size_hint: 0.5, 0.5
-        pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+        size_hint: 0.4, 0.4
+        pos_hint: {'center_x': 0.5, 'center_y': 0.8}
     MDTextField:
         id: login_username_textfield
         pos_hint: {'center_x': 0.5, 'center_y': 0.57}
@@ -81,7 +82,7 @@ ScreenManager:
     name: 'signup'
     Image:
         source: 'logo/logo.png'
-        size_hint: 0.5, 0.5
+        size_hint: 0.23, 0.23
         pos_hint: {'center_x': 0.5, 'center_y': 0.9}
     MDTextField:
         id: signup_firstname_textfield
@@ -159,6 +160,10 @@ ScreenManager:
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release: app.choice_books()
+    Image:
+        source: 'logo/art4.png'
+        size_hint: 0.9, 0.9
+        pos_hint: {'center_x': 0.5, 'center_y': 0.18}
     MDFloatingActionButtonSpeedDial:
         data: {'logout': 'Logout', 'arrow-left': 'Back',}
         callback: app.handleFloatingActionButtonSpeedDial
