@@ -166,7 +166,7 @@ ScreenManager:
         size_hint: 0.9, 0.9
         pos_hint: {'center_x': 0.5, 'center_y': 0.18}
     MDFloatingActionButtonSpeedDial:
-        data: {'logout': 'Logout', 'arrow-left': 'Back',}
+        data: {'logout': 'Logout',}
         callback: app.action_button_thread_starter
         rotation_root_button: True
         hint_animation: True
@@ -192,7 +192,7 @@ ScreenManager:
         pos_hint: {'center_x': 0.5, 'center_y': 0.63}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
-        on_release: app.show_content()
+        on_release: app.recommend_thread_starter()
     MDRectangleFlatButton:
         text: "Based on Mood"
         pos_hint: {'center_x': 0.5, 'center_y': 0.53}
@@ -389,8 +389,7 @@ ScreenManager:
         icon: "camera"
         pos_hint: {"center_x": .5, "center_y": .35}
         on_release:
-            root.ids.warning.text: 'Please Wait...'
-            app.get_mood()
+            app.camera_thread_starter()
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
         callback: app.action_button_thread_starter
@@ -410,49 +409,49 @@ ScreenManager:
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
-            app.mood_filter('Happy')
+            app.mood_filter_thread_starter('Happy')
     MDRectangleFlatButton:
         text: 'Sad'
         pos_hint: {'center_x': 0.7, 'center_y': 0.7}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
-            app.mood_filter('Sad')
+            app.mood_filter_thread_starter('Sad')
     MDRectangleFlatButton:
         text: 'Surprised'
         pos_hint: {'center_x': 0.3, 'center_y': 0.6}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
-            app.mood_filter('Surprised')
+            app.mood_filter_thread_starter('Surprised')
     MDRectangleFlatButton:
         text: 'Disgusted'
         pos_hint: {'center_x': 0.7, 'center_y': 0.6}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
-            app.mood_filter('Disgusted')
+            app.mood_filter_thread_starter('Disgusted')
     MDRectangleFlatButton:
         text: 'Angry'
         pos_hint: {'center_x': 0.3, 'center_y': 0.5}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
-            app.mood_filter('Angry')
+            app.mood_filter_thread_starter('Angry')
     MDRectangleFlatButton:
         text: 'Fearful'
         pos_hint: {'center_x': 0.7, 'center_y': 0.5}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
-            app.mood_filter('Fearful')
+            app.mood_filter_thread_starter('Fearful')
     MDRectangleFlatButton:
         text: 'Neutral'
         pos_hint: {'center_x': 0.5, 'center_y': 0.4}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
-            app.mood_filter('Neutral')
+            app.mood_filter_thread_starter('Neutral')
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
         callback: app.action_button_thread_starter

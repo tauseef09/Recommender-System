@@ -190,9 +190,13 @@ class DemoUI(MDApp):
             self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.source = "logo/art2.png"
             self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.size_hint = 0.6, 0.6
 
+    def recommend_thread_starter(self):
+        threading.Thread(target=self.show_content).start()
+
     def show_content(self):
         content_dict = dict()
-        self.transition('contentlist', True)
+        self.screen.transition.duration = 0
+        self.screen.current = 'loadingpage'
         if self.current_content_choice == "movies":
             if len(self.content_dict_movies) == 0:
                 self.content_dict_movies = recommend_movies(self.user_id, self.y_movies, self.r_movies)
@@ -221,6 +225,8 @@ class DemoUI(MDApp):
             item = OneLineListItem(text=value, on_release=self.show_item)
             item.id = str(key)
             self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
+
+        self.transition('contentlist', True)
 
     def show_item(self, obj):
         self.current_item_id = int(obj.id)
@@ -251,7 +257,8 @@ class DemoUI(MDApp):
         if forward:
             self.screen.transition.direction = 'left'
             self.screen.transition.duration = .3
-            self.previousScreen.append(self.screen.current)
+            if self.screen.current != 'loadingpage':
+                self.previousScreen.append(self.screen.current)
             self.screen.current = to
         else:
             self.current_item_id = -1
@@ -488,7 +495,12 @@ class DemoUI(MDApp):
                 self.y_songs, self.r_songs = rate(self.current_item_id, self.user_id, self.y_songs, self.r_songs,
                                                   self.current_item_rating)
 
+    def camera_thread_starter(self):
+        threading.Thread(target=self.get_mood).start()
+
     def get_mood(self):
+        self.screen.transition.duration = 0
+        self.screen.current = 'loadingpage'
         if take_photo():
             mood = detect_mood("data/capture.png", self.model)
             if mood != "No faces detected":
@@ -499,9 +511,13 @@ class DemoUI(MDApp):
                                          size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
                 self.dialogue.open()
 
+    def mood_filter_thread_starter(self, mood):
+        threading.Thread(target=self.mood_filter, args=[mood]).start()
+
     def mood_filter(self, mood):
         content_dict = dict()
-        self.transition('contentlist', True)
+        self.screen.transition.duration = 0
+        self.screen.current = 'loadingpage'
         if self.current_content_choice == "movies":
             if len(self.content_dict_movies) == 0:
                 self.content_dict_movies = recommend_movies(self.user_id, self.y_movies, self.r_movies)
@@ -536,6 +552,8 @@ class DemoUI(MDApp):
             item = OneLineListItem(text=value, on_release=self.show_item)
             item.id = str(key)
             self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
+
+        self.transition('contentlist', True)
 
     def search_item(self, searching):
         if self.current_content_choice == "movies":
