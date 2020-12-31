@@ -164,7 +164,7 @@ ScreenManager:
     Image:
         source: 'logo/art4.png'
         size_hint: 0.9, 0.9
-        pos_hint: {'center_x': 0.5, 'center_y': 0.18}
+        pos_hint: {'center_x': 0.445, 'center_y': 0.22}
     MDFloatingActionButtonSpeedDial:
         data: {'logout': 'Logout',}
         callback: app.action_button_thread_starter
