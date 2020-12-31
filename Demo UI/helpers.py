@@ -132,32 +132,32 @@ ScreenManager:
         id: welcome_label
         text: "Welcome!"
         halign: 'center'
-        pos_hint: {'center_y': 0.85}
+        pos_hint: {'center_y': 0.9}
         font_style: 'H4'
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
     MDLabel:
         text: "What are you in the mood for?"
         halign: 'center'
-        pos_hint: {'center_y': 0.73}
+        pos_hint: {'center_y': 0.78}
         font_style: 'Subtitle1'
         theme_text_color: 'Custom'
         text_color: 153/255, 153/255, 153/255, 1
     MDRectangleFlatButton:
         text: "Movies"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.63}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.68}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release: app.choice_movies()
     MDRectangleFlatButton:
         text: "Songs"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.53}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.58}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release: app.choice_songs()
     MDRectangleFlatButton:
         text: "Books"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.43}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.48}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release: app.choice_books()
@@ -183,25 +183,39 @@ ScreenManager:
         id: main_menu_label
         text: "Exploring!"
         halign: 'center'
-        pos_hint: {'center_y': 0.85}
+        pos_hint: {'center_y': 0.9}
         font_style: 'H4'
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
+    MDLabel:
+        text: "Get suggestions based on..."
+        halign: 'center'
+        pos_hint: {'center_y': 0.81}
+        font_style: 'Subtitle1'
+        theme_text_color: 'Custom'
+        text_color: 153/255, 153/255, 153/255, 1
+    MDLabel:
+        text: "or..."
+        halign: 'center'
+        pos_hint: {'center_y': 0.55}
+        font_style: 'Subtitle1'
+        theme_text_color: 'Custom'
+        text_color: 153/255, 153/255, 153/255, 1
     MDRectangleFlatButton:
-        text: "Based on Ratings"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.63}
+        text: "Ratings"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.72}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release: app.recommend_thread_starter()
     MDRectangleFlatButton:
-        text: "Based on Mood"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.53}
+        text: "Mood"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.63}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release: app.show_mood_photo_choice()
     MDRectangleFlatButton:
         text: "Search Content"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.43}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.47}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
@@ -248,20 +262,20 @@ ScreenManager:
         id: moodphotochoice_label
         text: "Welcome, Tauseef!"
         halign: 'center'
-        pos_hint: {'center_y': 0.85}
+        pos_hint: {'center_y': 0.9}
         font_style: 'H4'
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
     MDRectangleFlatButton:
         text: "Take Photo"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.63}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.68}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
             app.transition('camerapage', True)
     MDRectangleFlatButton:
         text: "Choose Mood"
-        pos_hint: {'center_x': 0.5, 'center_y': 0.53}
+        pos_hint: {'center_x': 0.5, 'center_y': 0.58}
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
         on_release:
@@ -370,13 +384,6 @@ ScreenManager:
 
 <CameraPage>:
     name: 'camerapage'
-    MDLabel:
-        text: 'Press Spacebar to take picture. Press esc to quit from camera'
-        halign: 'center'
-        pos_hint: {'center_y': 0.7}
-        font_style: 'Subtitle1'
-        theme_text_color: 'Custom'
-        text_color: 38/255, 50/255, 56/255, 1
     MDLabel:
         id: warning
         text: ''
