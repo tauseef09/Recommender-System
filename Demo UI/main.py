@@ -510,6 +510,7 @@ class DemoUI(MDApp):
                 self.dialogue = MDDialog(title="No Faces Detected", text="Please check if there is sufficient light.",
                                          size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
                 self.dialogue.open()
+                self.transition('camerapage', True)
 
     def mood_filter_thread_starter(self, mood):
         threading.Thread(target=self.mood_filter, args=[mood]).start()
