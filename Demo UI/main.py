@@ -250,6 +250,7 @@ class DemoUI(MDApp):
         # takes the screen it needs to transition to and if its a forward transition
         if forward:
             self.screen.transition.direction = 'left'
+            self.screen.transition.duration = .3
             self.previousScreen.append(self.screen.current)
             self.screen.current = to
         else:
@@ -257,32 +258,41 @@ class DemoUI(MDApp):
             self.current_item_rating = 0
             self.screen.get_screen('search').ids.search_field.text = ""
             self.screen.transition.direction = 'right'
+            self.screen.transition.duration = .3
             self.screen.current = self.previousScreen.pop()  # for going back it does not need a destination
 
-    def handleFloatingActionButtonSpeedDial(self, instance):
+    def action_button_thread_starter(self, instance):
         if instance.icon == "arrow-left":
-            self.transition(self.previousScreen, False)
+            threading.Thread(target=self.handleFloatingActionButtonSpeedDial, args=["arrow-left"]).start()
         elif instance.icon == "logout":
+            threading.Thread(target=self.handleFloatingActionButtonSpeedDial, args=["logout"]).start()
+
+    def handleFloatingActionButtonSpeedDial(self, icon_name):
+        if icon_name == "arrow-left":
+            self.transition(self.previousScreen, False)
+        elif icon_name == "logout":
+            self.screen.transition.duration = 0
+            self.screen.current = 'loadingpage'
             self.screen.get_screen('signup').ids.signup_firstname_textfield.text = ""
             self.screen.get_screen('signup').ids.signup_lastname_textfield.text = ""
             self.screen.get_screen('signup').ids.signup_username_textfield.text = ""
             self.screen.get_screen('signup').ids.signup_password_textfield.text = ""
 
-            thread_movies = threading.Thread(target=upload_yr_movies, args=[self.y_movies, self.r_movies])
-            thread_songs = threading.Thread(target=upload_yr_songs, args=[self.y_songs, self.r_songs])
-            thread_books = threading.Thread(target=upload_yr_books, args=[self.y_books, self.r_books])
+            # thread_movies = threading.Thread(target=upload_yr_movies, args=[self.y_movies, self.r_movies])
+            # thread_songs = threading.Thread(target=upload_yr_songs, args=[self.y_songs, self.r_songs])
+            # thread_books = threading.Thread(target=upload_yr_books, args=[self.y_books, self.r_books])
 
-            thread_movies.start()
-            thread_songs.start()
-            thread_books.start()
+            # thread_movies.start()
+            # thread_songs.start()
+            # thread_books.start()
 
-            thread_movies.join()
-            thread_songs.join()
-            thread_books.join()
+            # thread_movies.join()
+            # thread_songs.join()
+            # thread_books.join()
 
-            # upload_yr_movies(self.y_movies, self.r_movies)
-            # upload_yr_songs(self.y_songs, self.r_songs)
-            # upload_yr_books(self.y_books, self.r_books)
+            upload_yr_movies(self.y_movies, self.r_movies)
+            upload_yr_songs(self.y_songs, self.r_songs)
+            upload_yr_books(self.y_books, self.r_books)
 
             self.transition('login_signup', True)
 

@@ -12,6 +12,7 @@ ScreenManager:
     CameraPage:
     MoodChoice:
     Search:
+    LoadingPage:
 
 <AppLoad>:
     name: 'appload'
@@ -166,7 +167,7 @@ ScreenManager:
         pos_hint: {'center_x': 0.5, 'center_y': 0.18}
     MDFloatingActionButtonSpeedDial:
         data: {'logout': 'Logout', 'arrow-left': 'Back',}
-        callback: app.handleFloatingActionButtonSpeedDial
+        callback: app.action_button_thread_starter
         rotation_root_button: True
         hint_animation: True
         label_text_color: [239/255, 239/255, 239/255, 1]
@@ -212,7 +213,7 @@ ScreenManager:
         pos_hint: {'center_x': 0.5, 'center_y': 0.2}
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
-        callback: app.handleFloatingActionButtonSpeedDial
+        callback: app.action_button_thread_starter
         rotation_root_button: True
         hint_animation: True
         label_text_color: [239/255, 239/255, 239/255, 1]
@@ -230,7 +231,7 @@ ScreenManager:
             id: list_view
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
-        callback: app.handleFloatingActionButtonSpeedDial
+        callback: app.action_button_thread_starter
         rotation_root_button: True
         hint_animation: True
         label_text_color: [239/255, 239/255, 239/255, 1]
@@ -272,7 +273,7 @@ ScreenManager:
         pos_hint: {'center_x': 0.5, 'center_y': 0.2}
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
-        callback: app.handleFloatingActionButtonSpeedDial
+        callback: app.action_button_thread_starter
         rotation_root_button: True
         hint_animation: True
         label_text_color: [239/255, 239/255, 239/255, 1]
@@ -357,7 +358,7 @@ ScreenManager:
             app.save_rating_changes()
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
-        callback: app.handleFloatingActionButtonSpeedDial
+        callback: app.action_button_thread_starter
         rotation_root_button: True
         hint_animation: True
         label_text_color: [239/255, 239/255, 239/255, 1]
@@ -392,7 +393,7 @@ ScreenManager:
             app.get_mood()
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
-        callback: app.handleFloatingActionButtonSpeedDial
+        callback: app.action_button_thread_starter
         rotation_root_button: True
         hint_animation: True
         label_text_color: [239/255, 239/255, 239/255, 1]
@@ -454,7 +455,7 @@ ScreenManager:
             app.mood_filter('Neutral')
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
-        callback: app.handleFloatingActionButtonSpeedDial
+        callback: app.action_button_thread_starter
         rotation_root_button: True
         hint_animation: True
         label_text_color: [239/255, 239/255, 239/255, 1]
@@ -487,7 +488,7 @@ ScreenManager:
                 id: search_list_view
     MDFloatingActionButtonSpeedDial:
         data: {"logout":"Logout", "arrow-left":"Back"}
-        callback: app.handleFloatingActionButtonSpeedDial
+        callback: app.action_button_thread_starter
         rotation_root_button: True
         hint_animation: True
         label_text_color: [239/255, 239/255, 239/255, 1]
@@ -496,4 +497,12 @@ ScreenManager:
         bg_color_root_button: [38/255, 50/255, 56/255, 1]
         color_icon_root_button: [239/255, 239/255, 239/255, 1]
         color_icon_stack_button: [239/255, 239/255, 239/255, 1]
+
+<LoadingPage>:
+    name: 'loadingpage'
+    MDSpinner:
+        size_hint: None, None
+        size: dp(46), dp(46)
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        active: True
 """
