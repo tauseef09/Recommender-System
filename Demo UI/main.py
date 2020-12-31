@@ -70,6 +70,10 @@ class Search(Screen):
     pass
 
 
+class LoadingPage(Screen):
+    pass
+
+
 sm = ScreenManager()
 sm.add_widget(AppLoad(name='appload'))
 sm.add_widget(LoginSignup(name='login_signup'))
@@ -83,6 +87,7 @@ sm.add_widget(ItemPage(name='itempage'))
 sm.add_widget(CameraPage(name='camerapage'))
 sm.add_widget(MoodChoice(name='moodchoice'))
 sm.add_widget(Search(name='search'))
+sm.add_widget(LoadingPage(name='loadingpage'))
 
 
 class DemoUI(MDApp):
@@ -127,12 +132,13 @@ class DemoUI(MDApp):
         # upload_yr_books(self.y_books, self.r_books)
 
     def download_and_transition(self, obj):
-        self.model = preload_model()
         self.y_movies, self.r_movies = download_yr_movies()
         self.movie_dict = create_movies_dict()
         self.screen.get_screen('appload').ids.progress_bar.value = 33
         # print(self.y_movies.shape)
         # print(self.r_movies.shape)
+
+        self.model = preload_model()
 
         self.y_books, self.r_books = download_yr_books()
         self.book_dict = create_books_dict()
@@ -160,7 +166,7 @@ class DemoUI(MDApp):
         self.transition('mainmenu', True)
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring songs!"
         self.screen.get_screen('mainmenu').ids.art.source = "logo/art1.png"
-        self.screen.get_screen('mainmenu').ids.art.size_hint = 0.9, 0.9
+        self.screen.get_screen('mainmenu').ids.art.size_hint = 0.8, 0.8
 
     def choice_books(self):
         self.current_content_choice = "books"
@@ -178,7 +184,7 @@ class DemoUI(MDApp):
         elif self.current_content_choice == "songs":
             self.screen.get_screen('moodphotochoice').ids.moodphotochoice_label.text = "Exploring songs!"
             self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.source = "logo/art1.png"
-            self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.size_hint = 0.9, 0.9
+            self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.size_hint = 0.8, 0.8
         elif self.current_content_choice == "books":
             self.screen.get_screen('moodphotochoice').ids.moodphotochoice_label.text = "Exploring books!"
             self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.source = "logo/art2.png"
@@ -262,7 +268,6 @@ class DemoUI(MDApp):
             self.screen.get_screen('signup').ids.signup_username_textfield.text = ""
             self.screen.get_screen('signup').ids.signup_password_textfield.text = ""
 
-            start = time.perf_counter()
             thread_movies = threading.Thread(target=upload_yr_movies, args=[self.y_movies, self.r_movies])
             thread_songs = threading.Thread(target=upload_yr_songs, args=[self.y_songs, self.r_songs])
             thread_books = threading.Thread(target=upload_yr_books, args=[self.y_books, self.r_books])
@@ -279,8 +284,6 @@ class DemoUI(MDApp):
             # upload_yr_songs(self.y_songs, self.r_songs)
             # upload_yr_books(self.y_books, self.r_books)
 
-            finish = time.perf_counter()
-            print(f'Finished in {round(finish - start, 2)} second(s)')
             self.transition('login_signup', True)
 
     def signup(self):
