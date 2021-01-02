@@ -4,47 +4,38 @@ import numpy as np
 
 
 # downloads the y, r matrices of the movies and return the corresponding numpy arrays
-def download_yr_movies():
+def download_y_movies():
     # extracting the y and r matrices from the csv files
-    r = pd.read_csv('data/r_movies.csv').to_numpy()
     y = pd.read_csv('data/y_movies.csv').to_numpy()
-
-    return y, r
+    return y
 
 
 # downloads the y, r matrices of the books and return the corresponding numpy arrays
-def download_yr_books():
+def download_y_books():
     # extracting the y and r matrices from the csv files
-    r = pd.read_csv('data/r_books.csv').to_numpy()
     y = pd.read_csv('data/y_books.csv').to_numpy()
-
-    return y, r
+    return y
 
 
 # downloads the y, r matrices of the songs and return the corresponding numpy arrays
-def download_yr_songs():
+def download_y_songs():
     # extracting the y and r matrices from the csv files
-    r = pd.read_csv('data/r_songs.csv').to_numpy()
     y = pd.read_csv('data/y_songs.csv').to_numpy()
+    return y
 
-    return y, r
 
-
-def upload_yr_movies(y, r):
+def upload_y_movies(y):
     # converting numpy array to csv file
-    pd.DataFrame(r).to_csv('data/r_movies.csv', index=False)
     pd.DataFrame(y).to_csv('data/y_movies.csv', index=False)
 
 
-def upload_yr_books(y, r):
+def upload_y_books(y):
     # converting numpy array to csv file
-    pd.DataFrame(r).to_csv('data/r_books.csv', index=False)
     pd.DataFrame(y).to_csv('data/y_books.csv', index=False)
 
 
-def upload_yr_songs(y, r):
+def upload_y_songs(y):
     # converting numpy array to csv file
-    pd.DataFrame(r).to_csv('data/r_songs.csv', index=False)
     pd.DataFrame(y).to_csv('data/y_songs.csv', index=False)
 
 
@@ -326,12 +317,11 @@ def recommend_songs(userID, y, r):
     return suggested_movie_dict
 
 
-def rate(item_id, user_id, y, r, rating):
+def rate(item_id, user_id, y, rating):
     # allows user to rate certain items
     # updating y and r based on the user's rating on item_id
     y[item_id, user_id] = rating
-    r = (y != 0) * 1
-    return y, r
+    return y
 
 
 def filter_content_movies(user_mood, suggested_content_dict):
@@ -377,7 +367,7 @@ def create_movies_dict():
     movieList = pd.read_csv('data/movie_ids.csv')["name"].to_list()
     demo_dict = dict()
     for i in range(len(movieList)):
-        demo_dict[i] = movieList[i]
+        demo_dict[movieList[i]] = i
     return demo_dict
 
 
@@ -385,7 +375,7 @@ def create_songs_dict():
     songList = pd.read_csv('data/song_ids.csv')["name"].to_list()
     demo_dict = dict()
     for i in range(len(songList)):
-        demo_dict[i] = songList[i]
+        demo_dict[songList[i]] = i
     return demo_dict
 
 
@@ -393,5 +383,64 @@ def create_books_dict():
     bookList = pd.read_csv('data/book_ids.csv')["name"].to_list()
     demo_dict = dict()
     for i in range(len(bookList)):
-        demo_dict[i] = bookList[i]
+        demo_dict[bookList[i]] = i
     return demo_dict
+
+
+def recommend(y_movies_df, merged, moviemat, movie_dict, movies_rated, movies_liked, filt_good_rating_count, filt_rating_count):
+    # create the average rating dataframe
+    ratings = pd.DataFrame(merged.groupby(['id', 'name'])['rating'].mean()).reset_index().sort_values('rating', ascending=False)
+
+    # finds out if user has rated any movies or not
+    if movies_rated == 0:
+        # returns a dictionary of the 25 top rated movies
+        return ratings[['id', 'name']].head(25).set_index('id').T.to_dict('records')[0]
+    else:
+        if movies_liked >= 4:
+            # selects 4 random samples from movies rated more than 3 stars
+            liked_movie_sample = merged[filt_good_rating_count].sample(n=4)['name']
+            suggestion_df = list()
+            suggestion = dict()
+
+            for i in range(4):
+                suggestion_df.append(find_correlation(liked_movie_sample.iloc[i], moviemat, False).reset_index())
+            for i in range(4):
+                movie_count = 0
+                while movie_count < 6:
+                    selected_movie = suggestion_df[i].sample(n=1)['name'].values[0]
+                    if selected_movie not in suggestion.values():
+                        suggestion[movie_dict[selected_movie]] = selected_movie
+                        movie_count += 1
+            return suggestion
+        elif movies_liked > 0:
+            # selects all the movies that are rated more than 3 stars
+            liked_movie_sample = merged[filt_good_rating_count]['name']
+            suggestion_df = list()
+            suggestion = dict()
+
+            for i in range(movies_liked):
+                suggestion_df.append(find_correlation(liked_movie_sample.iloc[i], moviemat, False).reset_index())
+            for i in range(movies_liked):
+                movie_count = 0
+                while movie_count < 24 / movies_liked:
+                    selected_movie = suggestion_df[i].sample(n=1)['name'].values[0]
+                    if selected_movie not in suggestion.values():
+                        suggestion[movie_dict[selected_movie]] = selected_movie
+                        movie_count += 1
+            return suggestion
+        else:
+            liked_movie_sample = merged[filt_rating_count].sample(n=1)['name']
+            suggestion = dict()
+            selected_movie = find_correlation(liked_movie_sample.iloc[0], moviemat, True).reset_index().sample(n=24)['name']
+            for i in range(24):
+                suggestion[movie_dict[selected_movie.values[i]]] = selected_movie.values[i]
+            return suggestion
+
+
+def find_correlation(name, moviemat, asc):
+    # returns the correlation regarding the passed name
+    movie_ratings = moviemat[name]
+    similar_to_movie = moviemat.corrwith(movie_ratings)
+    corr_movie = pd.DataFrame(similar_to_movie, columns=['Correlation'])
+    corr_movie.dropna(inplace=True)
+    return corr_movie.sort_values('Correlation', ascending=asc).iloc[1:27]
