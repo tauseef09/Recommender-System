@@ -3,10 +3,10 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from helpers import screens
 from kivy.core.window import Window
-from recommender import download_yr_movies, download_yr_books, download_yr_songs
-from recommender import upload_yr_movies, upload_yr_books, upload_yr_songs
+from recommender import download_y_movies, download_y_books, download_y_songs
+from recommender import upload_y_movies, upload_y_books, upload_y_songs
 from recommender import create_movies_dict, create_songs_dict, create_books_dict
-from recommender import recommend_movies, recommend_books, recommend_songs, rate
+from recommender import recommend, rate
 from recommender import filter_content_movies, filter_content_books, filter_content_songs
 from preload_model import preload_model
 from take_photo import detect_mood, take_photo
@@ -18,6 +18,7 @@ import numpy as np
 import json
 import threading
 import time
+import pandas as pd
 
 Window.size = (330, 600)
 
@@ -115,39 +116,73 @@ class DemoUI(MDApp):
         Clock.schedule_once(self.download_and_transition, 2.5)
 
     def on_stop(self):
-        thread_movies = threading.Thread(target=upload_yr_movies, args=[self.y_movies, self.r_movies])
-        thread_songs = threading.Thread(target=upload_yr_songs, args=[self.y_songs, self.r_songs])
-        thread_books = threading.Thread(target=upload_yr_books, args=[self.y_books, self.r_books])
+        # thread_movies = threading.Thread(target=upload_yr_movies, args=[self.y_movies, self.r_movies])
+        # thread_songs = threading.Thread(target=upload_yr_songs, args=[self.y_songs, self.r_songs])
+        # thread_books = threading.Thread(target=upload_yr_books, args=[self.y_books, self.r_books])
 
-        thread_movies.start()
-        thread_songs.start()
-        thread_books.start()
+        # thread_movies.start()
+        # thread_songs.start()
+        # thread_books.start()
 
-        thread_movies.join()
-        thread_songs.join()
-        thread_books.join()
+        # thread_movies.join()
+        # thread_songs.join()
+        # thread_books.join()
 
-        # upload_yr_movies(self.y_movies, self.r_movies)
-        # upload_yr_songs(self.y_songs, self.r_songs)
-        # upload_yr_books(self.y_books, self.r_books)
+        upload_y_movies(self.y_movies)
+        upload_y_songs(self.y_songs)
+        upload_y_books(self.y_books)
 
     def download_and_transition(self, obj):
-        self.y_movies, self.r_movies = download_yr_movies()
+        self.y_movies = download_y_movies()
         self.movie_dict = create_movies_dict()
+        self.movie_names = pd.read_csv('data/movie_ids.csv')
+
+        # self.y_movies_df = pd.DataFrame(self.y_movies)
+        # self.y_movies_df = self.y_movies_df.T.stack().reset_index()
+        # self.y_movies_df.columns = ['user_id','id','rating']
+        # # casting dtypes for merging
+        # self.movie_names = self.movie_names.astype({'id': 'int'})
+        # self.y_movies_df = self.y_movies_df.astype({'id': 'int'})
+        # # merging 2 dataframes
+        # self.merged_movies = pd.merge(self.y_movies_df,self.movie_names,on='id')
+        # # creating moviemat
+        # self.moviemat = self.merged_movies.pivot_table(index='user_id',columns='name',values='rating')
         self.screen.get_screen('appload').ids.progress_bar.value = 33
         # print(self.y_movies.shape)
         # print(self.r_movies.shape)
 
         self.model = preload_model()
 
-        self.y_books, self.r_books = download_yr_books()
+        self.y_books = download_y_books()
         self.book_dict = create_books_dict()
+        self.book_names = pd.read_csv('data/book_ids.csv')
+        # self.y_books_df = pd.DataFrame(self.y_books)
+        # self.y_books_df = self.y_books_df.T.stack().reset_index()
+        # self.y_books_df.columns = ['user_id','id','rating']
+        # # casting dtypes for merging
+        # self.book_names = self.book_names.astype({'id': 'int'})
+        # self.y_books_df = self.y_books_df.astype({'id': 'int'})
+        # # merging 2 dataframes
+        # self.merged_books = pd.merge(self.y_books_df,self.book_names,on='id')
+        # # creating moviemat
+        # self.bookmat = self.merged_books.pivot_table(index='user_id',columns='name',values='rating')
         self.screen.get_screen('appload').ids.progress_bar.value = 66
         # print(self.y_books.shape)
         # print(self.r_books.shape)
 
-        self.y_songs, self.r_songs = download_yr_songs()
+        self.y_songs = download_y_songs()
         self.song_dict = create_songs_dict()
+        self.song_names = pd.read_csv('data/song_ids.csv')
+        # self.y_songs_df = pd.DataFrame(self.y_songs)
+        # self.y_songs_df = self.y_songs_df.T.stack().reset_index()
+        # self.y_songs_df.columns = ['user_id','id','rating']
+        # # casting dtypes for merging
+        # self.song_names = self.song_names.astype({'id': 'int'})
+        # self.y_songs_df = self.y_songs_df.astype({'id': 'int'})
+        # # merging 2 dataframes
+        # self.merged_songs = pd.merge(self.y_songs_df,self.song_names,on='id')
+        # # creating moviemat
+        # self.songmat = self.merged_songs.pivot_table(index='user_id',columns='name',values='rating')
         self.screen.get_screen('appload').ids.progress_bar.value = 99
         # print(self.y_songs.shape)
         # print(self.r_songs.shape)
@@ -196,22 +231,25 @@ class DemoUI(MDApp):
     def show_content(self):
         content_dict = dict()
         self.screen.transition.duration = 0
-        self.screen.current = 'loadingpage'
+        self.transition('loadingpage', True)
         if self.current_content_choice == "movies":
             if len(self.content_dict_movies) == 0:
-                self.content_dict_movies = recommend_movies(self.user_id, self.y_movies, self.r_movies)
+                self.content_dict_movies = recommend(self.y_movies_df, self.merged_movies, self.moviemat, self.movie_dict,
+                                                    self.movies_rated, self.movies_liked, self.filt_good_movies_rating_count, self.filt_movies_rating_count)
                 content_dict = self.content_dict_movies
             else:
                 content_dict = self.content_dict_movies
         elif self.current_content_choice == "books":
             if len(self.content_dict_books) == 0:
-                self.content_dict_books = recommend_books(self.user_id, self.y_books, self.r_books)
+                self.content_dict_books = recommend(self.y_books_df, self.merged_books, self.bookmat, self.book_dict,
+                                                    self.books_rated, self.books_liked, self.filt_good_books_rating_count, self.filt_books_rating_count)
                 content_dict = self.content_dict_books
             else:
                 content_dict = self.content_dict_books
         else:
             if len(self.content_dict_songs) == 0:
-                self.content_dict_songs = recommend_songs(self.user_id, self.y_songs, self.r_songs)
+                self.content_dict_songs = recommend(self.y_songs_df, self.merged_songs, self.songmat, self.song_dict,
+                                                    self.songs_rated, self.songs_liked, self.filt_good_songs_rating_count, self.filt_songs_rating_count)
                 content_dict = self.content_dict_songs
             else:
                 content_dict = self.content_dict_songs
@@ -219,7 +257,7 @@ class DemoUI(MDApp):
         i = 0
         self.screen.get_screen('contentlist').ids.list_view.clear_widgets()
         for key, value in content_dict.items():
-            if i == 20:
+            if i == 24:
                 break
             i += 1
             item = OneLineListItem(text=value, on_release=self.show_item)
@@ -257,6 +295,8 @@ class DemoUI(MDApp):
         if forward:
             self.screen.transition.direction = 'left'
             self.screen.transition.duration = .3
+            if to == 'loadingpage':
+                self.screen.transition.duration = 0
             if self.screen.current != 'loadingpage':
                 self.previousScreen.append(self.screen.current)
             self.screen.current = to
@@ -279,7 +319,7 @@ class DemoUI(MDApp):
             self.transition(self.previousScreen, False)
         elif icon_name == "logout":
             self.screen.transition.duration = 0
-            self.screen.current = 'loadingpage'
+            self.transition('loadingpage', True)
             self.screen.get_screen('signup').ids.signup_firstname_textfield.text = ""
             self.screen.get_screen('signup').ids.signup_lastname_textfield.text = ""
             self.screen.get_screen('signup').ids.signup_username_textfield.text = ""
@@ -296,14 +336,22 @@ class DemoUI(MDApp):
             # thread_movies.join()
             # thread_songs.join()
             # thread_books.join()
+            self.content_dict_movies.clear()
+            self.content_dict_books.clear()
+            self.content_dict_songs.clear()
 
-            upload_yr_movies(self.y_movies, self.r_movies)
-            upload_yr_songs(self.y_songs, self.r_songs)
-            upload_yr_books(self.y_books, self.r_books)
+            upload_y_movies(self.y_movies)
+            upload_y_songs(self.y_songs)
+            upload_y_books(self.y_books)
 
             self.transition('login_signup', True)
 
+    def signup_thread_starter(self):
+        threading.Thread(target=self.signup).start()
+
     def signup(self):
+        self.screen.transition.duration = 0
+        self.transition('loadingpage', True)
         self.first_name = self.screen.get_screen('signup').ids.signup_firstname_textfield.text
         first_name_false = True
 
@@ -324,6 +372,55 @@ class DemoUI(MDApp):
         else:
             if self.username_is_available():
                 self.register_user()
+
+                self.y_movies_df = pd.DataFrame(self.y_movies)
+                self.y_movies_df = self.y_movies_df.T.stack().reset_index()
+                self.y_movies_df.columns = ['user_id','id','rating']
+                # casting dtypes for merging
+                self.movie_names = self.movie_names.astype({'id': 'int'})
+                self.y_movies_df = self.y_movies_df.astype({'id': 'int'})
+                # merging 2 dataframes
+                self.merged_movies = pd.merge(self.y_movies_df,self.movie_names,on='id')
+                # creating moviemat
+                self.moviemat = self.merged_movies.pivot_table(index='user_id',columns='name',values='rating')
+
+                self.y_books_df = pd.DataFrame(self.y_books)
+                self.y_books_df = self.y_books_df.T.stack().reset_index()
+                self.y_books_df.columns = ['user_id','id','rating']
+                # casting dtypes for merging
+                self.book_names = self.book_names.astype({'id': 'int'})
+                self.y_books_df = self.y_books_df.astype({'id': 'int'})
+                # merging 2 dataframes
+                self.merged_books = pd.merge(self.y_books_df,self.book_names,on='id')
+                # creating moviemat
+                self.bookmat = self.merged_books.pivot_table(index='user_id',columns='name',values='rating')
+
+                self.y_songs_df = pd.DataFrame(self.y_songs)
+                self.y_songs_df = self.y_songs_df.T.stack().reset_index()
+                self.y_songs_df.columns = ['user_id','id','rating']
+                # casting dtypes for merging
+                self.song_names = self.song_names.astype({'id': 'int'})
+                self.y_songs_df = self.y_songs_df.astype({'id': 'int'})
+                # merging 2 dataframes
+                self.merged_songs = pd.merge(self.y_songs_df,self.song_names,on='id')
+                # creating moviemat
+                self.songmat = self.merged_songs.pivot_table(index='user_id',columns='name',values='rating')
+
+                self.filt_movies_rating_count = ((self.merged_movies['user_id'] == self.user_id) & (self.merged_movies['rating'] > 0.0))
+                self.movies_rated = len(self.merged_movies[self.filt_movies_rating_count].index)
+                self.filt_good_movies_rating_count = ((self.merged_movies['user_id'] == self.user_id) & (self.merged_movies['rating'] >= 3.0))
+                self.movies_liked = len(self.merged_movies[self.filt_good_movies_rating_count].index)
+
+                self.filt_books_rating_count = ((self.merged_books['user_id'] == self.user_id) & (self.merged_books['rating'] > 0.0))
+                self.books_rated = len(self.merged_books[self.filt_books_rating_count].index)
+                self.filt_good_books_rating_count = ((self.merged_books['user_id'] == self.user_id) & (self.merged_books['rating'] >= 3.0))
+                self.books_liked = len(self.merged_books[self.filt_good_books_rating_count].index)
+
+                self.filt_songs_rating_count = ((self.merged_songs['user_id'] == self.user_id) & (self.merged_songs['rating'] > 0.0))
+                self.songs_rated = len(self.merged_songs[self.filt_songs_rating_count].index)
+                self.filt_good_songs_rating_count = ((self.merged_songs['user_id'] == self.user_id) & (self.merged_songs['rating'] >= 3.0))
+                self.songs_liked = len(self.merged_songs[self.filt_good_songs_rating_count].index)
+
                 first_name_false = False
                 last_name_false = False
                 username_false = False
@@ -394,28 +491,16 @@ class DemoUI(MDApp):
 
     def add_user_vectors(self):
         my_ratings_movies = np.zeros((self.y_movies.shape[0], 1), dtype=float)
-        # generating user r vector from the user ratings (movies)
-        my_r_movies = (my_ratings_movies != 0) * 1
         # adding new user y vector to y rating matrix (movies)
         self.y_movies = np.hstack((self.y_movies, my_ratings_movies))
-        # adding new user r vector to original r matrix (movies)
-        self.r_movies = np.hstack((self.r_movies, my_r_movies))
 
         my_ratings_songs = np.zeros((self.y_songs.shape[0], 1), dtype=float)
-        # generating user r vector from the user ratings (songs)
-        my_r_songs = (my_ratings_songs != 0) * 1
         # adding new user y vector to y rating matrix (songs)
         self.y_songs = np.hstack((self.y_songs, my_ratings_songs))
-        # adding new user r vector to original r matrix (songs)
-        self.r_songs = np.hstack((self.r_songs, my_r_songs))
 
         my_ratings_books = np.zeros((self.y_books.shape[0], 1), dtype=float)
-        # generating user r vector from the user ratings (books)
-        my_r_books = (my_ratings_books != 0) * 1
         # adding new user y vector to y rating matrix (books)
         self.y_books = np.hstack((self.y_books, my_ratings_books))
-        # adding new user r vector to original r matrix (books)
-        self.r_books = np.hstack((self.r_books, my_r_books))
 
     def register_user(self):
         self.user_id = self.y_movies.shape[1]
@@ -436,7 +521,12 @@ class DemoUI(MDApp):
         with open('users.json', 'w') as f:
             json.dump(data, f, indent=4)
 
+    def login_thread_starter(self):
+        threading.Thread(target=self.login).start()
+
     def login(self):
+        self.screen.transition.duration = 0
+        self.transition('loadingpage', True)
         self.username = self.screen.get_screen('login').ids.login_username_textfield.text
         username_false = True
 
@@ -451,6 +541,55 @@ class DemoUI(MDApp):
         else:
             if self.verify_user():
                 self.fetch_user_info()
+
+                self.y_movies_df = pd.DataFrame(self.y_movies)
+                self.y_movies_df = self.y_movies_df.T.stack().reset_index()
+                self.y_movies_df.columns = ['user_id','id','rating']
+                # casting dtypes for merging
+                self.movie_names = self.movie_names.astype({'id': 'int'})
+                self.y_movies_df = self.y_movies_df.astype({'id': 'int'})
+                # merging 2 dataframes
+                self.merged_movies = pd.merge(self.y_movies_df,self.movie_names,on='id')
+                # creating moviemat
+                self.moviemat = self.merged_movies.pivot_table(index='user_id',columns='name',values='rating')
+
+                self.y_books_df = pd.DataFrame(self.y_books)
+                self.y_books_df = self.y_books_df.T.stack().reset_index()
+                self.y_books_df.columns = ['user_id','id','rating']
+                # casting dtypes for merging
+                self.book_names = self.book_names.astype({'id': 'int'})
+                self.y_books_df = self.y_books_df.astype({'id': 'int'})
+                # merging 2 dataframes
+                self.merged_books = pd.merge(self.y_books_df,self.book_names,on='id')
+                # creating moviemat
+                self.bookmat = self.merged_books.pivot_table(index='user_id',columns='name',values='rating')
+
+                self.y_songs_df = pd.DataFrame(self.y_songs)
+                self.y_songs_df = self.y_songs_df.T.stack().reset_index()
+                self.y_songs_df.columns = ['user_id','id','rating']
+                # casting dtypes for merging
+                self.song_names = self.song_names.astype({'id': 'int'})
+                self.y_songs_df = self.y_songs_df.astype({'id': 'int'})
+                # merging 2 dataframes
+                self.merged_songs = pd.merge(self.y_songs_df,self.song_names,on='id')
+                # creating moviemat
+                self.songmat = self.merged_songs.pivot_table(index='user_id',columns='name',values='rating')
+
+                self.filt_movies_rating_count = ((self.merged_movies['user_id'] == self.user_id) & (self.merged_movies['rating'] > 0.0))
+                self.movies_rated = len(self.merged_movies[self.filt_movies_rating_count].index)
+                self.filt_good_movies_rating_count = ((self.merged_movies['user_id'] == self.user_id) & (self.merged_movies['rating'] >= 3.0))
+                self.movies_liked = len(self.merged_movies[self.filt_good_movies_rating_count].index)
+
+                self.filt_books_rating_count = ((self.merged_books['user_id'] == self.user_id) & (self.merged_books['rating'] > 0.0))
+                self.books_rated = len(self.merged_books[self.filt_books_rating_count].index)
+                self.filt_good_books_rating_count = ((self.merged_books['user_id'] == self.user_id) & (self.merged_books['rating'] >= 3.0))
+                self.books_liked = len(self.merged_books[self.filt_good_books_rating_count].index)
+
+                self.filt_songs_rating_count = ((self.merged_songs['user_id'] == self.user_id) & (self.merged_songs['rating'] > 0.0))
+                self.songs_rated = len(self.merged_songs[self.filt_songs_rating_count].index)
+                self.filt_good_songs_rating_count = ((self.merged_songs['user_id'] == self.user_id) & (self.merged_songs['rating'] >= 3.0))
+                self.songs_liked = len(self.merged_songs[self.filt_good_songs_rating_count].index)
+
                 username_false = False
                 password_false = False
             else:
@@ -486,13 +625,13 @@ class DemoUI(MDApp):
     def save_rating_changes(self):
         if self.current_item_id != -1 and self.current_item_rating != 0:
             if self.current_content_choice == "movies":
-                self.y_movies, self.r_movies = rate(self.current_item_id, self.user_id, self.y_movies, self.r_movies,
+                self.y_movies = rate(self.current_item_id, self.user_id, self.y_movies,
                                                     self.current_item_rating)
             elif self.current_content_choice == "books":
-                self.y_books, self.r_books = rate(self.current_item_id, self.user_id, self.y_books, self.r_books,
+                self.y_books = rate(self.current_item_id, self.user_id, self.y_books,
                                                   self.current_item_rating)
             else:
-                self.y_songs, self.r_songs = rate(self.current_item_id, self.user_id, self.y_songs, self.r_songs,
+                self.y_songs = rate(self.current_item_id, self.user_id, self.y_songs,
                                                   self.current_item_rating)
 
     def camera_thread_starter(self):
@@ -500,7 +639,7 @@ class DemoUI(MDApp):
 
     def get_mood(self):
         self.screen.transition.duration = 0
-        self.screen.current = 'loadingpage'
+        self.transition('loadingpage', True)
         if take_photo():
             mood = detect_mood("data/capture.png", self.model)
             if mood != "No faces detected":
@@ -518,10 +657,11 @@ class DemoUI(MDApp):
     def mood_filter(self, mood):
         content_dict = dict()
         self.screen.transition.duration = 0
-        self.screen.current = 'loadingpage'
+        self.transition('loadingpage', True)
         if self.current_content_choice == "movies":
             if len(self.content_dict_movies) == 0:
-                self.content_dict_movies = recommend_movies(self.user_id, self.y_movies, self.r_movies)
+                self.content_dict_movies = recommend(self.y_movies_df, self.merged_movies, self.moviemat, self.movie_dict,
+                                                    self.movies_rated, self.movies_liked, self.filt_good_movies_rating_count, self.filt_movies_rating_count)
                 content_dict = self.content_dict_movies
                 content_dict = filter_content_movies(mood, content_dict)
             else:
@@ -529,7 +669,8 @@ class DemoUI(MDApp):
                 content_dict = filter_content_movies(mood, content_dict)
         elif self.current_content_choice == "books":
             if len(self.content_dict_books) == 0:
-                self.content_dict_books = recommend_books(self.user_id, self.y_books, self.r_books)
+                self.content_dict_books = recommend(self.y_books_df, self.merged_books, self.bookmat, self.book_dict,
+                                                    self.books_rated, self.books_liked, self.filt_good_books_rating_count, self.filt_books_rating_count)
                 content_dict = self.content_dict_books
                 content_dict = filter_content_books(mood, content_dict)
             else:
@@ -537,7 +678,8 @@ class DemoUI(MDApp):
                 content_dict = filter_content_books(mood, content_dict)
         else:
             if len(self.content_dict_songs) == 0:
-                self.content_dict_songs = recommend_songs(self.user_id, self.y_songs, self.r_songs)
+                self.content_dict_songs = recommend(self.y_songs_df, self.merged_songs, self.songmat, self.song_dict,
+                                                    self.songs_rated, self.songs_liked, self.filt_good_songs_rating_count, self.filt_songs_rating_count)
                 content_dict = self.content_dict_songs
                 content_dict = filter_content_songs(mood, content_dict)
             else:
@@ -547,7 +689,7 @@ class DemoUI(MDApp):
         i = 0
         self.screen.get_screen('contentlist').ids.list_view.clear_widgets()
         for key, value in content_dict.items():
-            if i == 20:
+            if i == 24:
                 break
             i += 1
             item = OneLineListItem(text=value, on_release=self.show_item)
@@ -570,10 +712,10 @@ class DemoUI(MDApp):
         i = 0
         for key, value in demo_dict.items():
             if searching and search_key != "":
-                if search_key in value and i <= 20:
+                if search_key in key and i <= 20:
                     i += 1
-                    item = OneLineListItem(text=value, on_release=self.show_item)
-                    item.id = str(key)
+                    item = OneLineListItem(text=key, on_release=self.show_item)
+                    item.id = str(value)
                     self.screen.get_screen('search').ids.search_list_view.add_widget(item)
 
 

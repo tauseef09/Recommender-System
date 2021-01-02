@@ -75,7 +75,7 @@ ScreenManager:
         text: "Login"
         pos_hint: {'center_x': 0.5, 'center_y': 0.25}
         on_release:
-            app.login()
+            app.login_thread_starter()
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
 
@@ -122,7 +122,7 @@ ScreenManager:
         text: "Signup"
         pos_hint: {'center_x': 0.5, 'center_y': 0.15}
         on_release:
-            app.signup()
+            app.signup_thread_starter()
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
 
