@@ -116,80 +116,37 @@ class DemoUI(MDApp):
         Clock.schedule_once(self.download_and_transition, 2.5)
 
     def on_stop(self):
-        # thread_movies = threading.Thread(target=upload_yr_movies, args=[self.y_movies, self.r_movies])
-        # thread_songs = threading.Thread(target=upload_yr_songs, args=[self.y_songs, self.r_songs])
-        # thread_books = threading.Thread(target=upload_yr_books, args=[self.y_books, self.r_books])
-
-        # thread_movies.start()
-        # thread_songs.start()
-        # thread_books.start()
-
-        # thread_movies.join()
-        # thread_songs.join()
-        # thread_books.join()
-
         upload_y_movies(self.y_movies)
         upload_y_songs(self.y_songs)
         upload_y_books(self.y_books)
 
     def download_and_transition(self, obj):
+        """ Downloads all the required data and proceeds to the login/signup screen.
+
+        """
         self.y_movies = download_y_movies()
         self.movie_dict = create_movies_dict()
         self.movie_names = pd.read_csv('data/movie_ids.csv')
-
-        # self.y_movies_df = pd.DataFrame(self.y_movies)
-        # self.y_movies_df = self.y_movies_df.T.stack().reset_index()
-        # self.y_movies_df.columns = ['user_id','id','rating']
-        # # casting dtypes for merging
-        # self.movie_names = self.movie_names.astype({'id': 'int'})
-        # self.y_movies_df = self.y_movies_df.astype({'id': 'int'})
-        # # merging 2 dataframes
-        # self.merged_movies = pd.merge(self.y_movies_df,self.movie_names,on='id')
-        # # creating moviemat
-        # self.moviemat = self.merged_movies.pivot_table(index='user_id',columns='name',values='rating')
         self.screen.get_screen('appload').ids.progress_bar.value = 33
-        # print(self.y_movies.shape)
-        # print(self.r_movies.shape)
 
         self.model = preload_model()
 
         self.y_books = download_y_books()
         self.book_dict = create_books_dict()
         self.book_names = pd.read_csv('data/book_ids.csv')
-        # self.y_books_df = pd.DataFrame(self.y_books)
-        # self.y_books_df = self.y_books_df.T.stack().reset_index()
-        # self.y_books_df.columns = ['user_id','id','rating']
-        # # casting dtypes for merging
-        # self.book_names = self.book_names.astype({'id': 'int'})
-        # self.y_books_df = self.y_books_df.astype({'id': 'int'})
-        # # merging 2 dataframes
-        # self.merged_books = pd.merge(self.y_books_df,self.book_names,on='id')
-        # # creating moviemat
-        # self.bookmat = self.merged_books.pivot_table(index='user_id',columns='name',values='rating')
         self.screen.get_screen('appload').ids.progress_bar.value = 66
-        # print(self.y_books.shape)
-        # print(self.r_books.shape)
 
         self.y_songs = download_y_songs()
         self.song_dict = create_songs_dict()
         self.song_names = pd.read_csv('data/song_ids.csv')
-        # self.y_songs_df = pd.DataFrame(self.y_songs)
-        # self.y_songs_df = self.y_songs_df.T.stack().reset_index()
-        # self.y_songs_df.columns = ['user_id','id','rating']
-        # # casting dtypes for merging
-        # self.song_names = self.song_names.astype({'id': 'int'})
-        # self.y_songs_df = self.y_songs_df.astype({'id': 'int'})
-        # # merging 2 dataframes
-        # self.merged_songs = pd.merge(self.y_songs_df,self.song_names,on='id')
-        # # creating moviemat
-        # self.songmat = self.merged_songs.pivot_table(index='user_id',columns='name',values='rating')
         self.screen.get_screen('appload').ids.progress_bar.value = 99
-        # print(self.y_songs.shape)
-        # print(self.r_songs.shape)
 
         self.screen.current = 'login_signup'
 
     def choice_movies(self):
+        """ Sets up the UI elements of the 'mainmenu' page for content choice: movies.
+
+        """
         self.current_content_choice = "movies"
         self.transition('mainmenu', True)
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring movies!"
@@ -197,6 +154,9 @@ class DemoUI(MDApp):
         self.screen.get_screen('mainmenu').ids.art.size_hint = 0.6, 0.6
 
     def choice_songs(self):
+        """ Sets up the UI elements of the 'mainmenu' page for content choice: songs.
+        
+        """
         self.current_content_choice = "songs"
         self.transition('mainmenu', True)
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring songs!"
@@ -204,6 +164,9 @@ class DemoUI(MDApp):
         self.screen.get_screen('mainmenu').ids.art.size_hint = 0.8, 0.8
 
     def choice_books(self):
+        """ Sets up the UI elements of the 'mainmenu' page for content choice: books.
+        
+        """
         self.current_content_choice = "books"
         self.transition('mainmenu', True)
         self.screen.get_screen('mainmenu').ids.main_menu_label.text = "Exploring books!"
@@ -211,6 +174,10 @@ class DemoUI(MDApp):
         self.screen.get_screen('mainmenu').ids.art.size_hint = 0.6, 0.6
 
     def show_mood_photo_choice(self):
+        """ Transitions to and sets up the UI elements of the 'moodphotochoice' page depending
+            on the content the user has currently selected.
+
+        """
         self.transition('moodphotochoice', True)
         if self.current_content_choice == "movies":
             self.screen.get_screen('moodphotochoice').ids.moodphotochoice_label.text = "Exploring movies!"
@@ -226,9 +193,17 @@ class DemoUI(MDApp):
             self.screen.get_screen('moodphotochoice').ids.art_moodphotochoice.size_hint = 0.6, 0.6
 
     def recommend_thread_starter(self):
+        """ Starts the thread for the show_content() function.
+
+        """
         threading.Thread(target=self.show_content).start()
 
     def show_content(self):
+        """ Prepares the content list for the user depending on their current choice of content.
+            Adds the list of items to the OneLineListItem for display in the 'contentlist' page.
+            Transitions to the 'contentlist' page.
+
+        """
         content_dict = dict()
         self.screen.transition.duration = 0
         self.transition('loadingpage', True)
@@ -267,6 +242,13 @@ class DemoUI(MDApp):
         self.transition('contentlist', True)
 
     def show_item(self, obj):
+        """ Transitions to and prepares the UI elements of the 'itempage' for the item
+            that has been selected from the list.
+
+        Parameters:
+        obj (object): Object of the list item that has been selected.
+
+        """
         self.current_item_id = int(obj.id)
         self.screen.get_screen('itempage').ids.item.text = obj.text
         self.screen.get_screen('itempage').ids.userrating.text = 'My rating: Unrated'
@@ -291,6 +273,13 @@ class DemoUI(MDApp):
         self.transition('itempage', True)
 
     def transition(self, to, forward):
+        """ Enables the transition to a different page.
+
+        Parameters:
+        to (str): Name of the page where the app will transition to.
+        forward (bool): True if the direction of transition is forward.
+
+        """
         # takes the screen it needs to transition to and if its a forward transition
         if forward:
             self.screen.transition.direction = 'left'
@@ -306,40 +295,48 @@ class DemoUI(MDApp):
             self.screen.get_screen('search').ids.search_field.text = ""
             self.screen.transition.direction = 'right'
             self.screen.transition.duration = .3
-            self.screen.current = self.previousScreen.pop()  # for going back it does not need a destination
+            # for going back it does not need a destination
+            self.screen.current = self.previousScreen.pop()
 
     def action_button_thread_starter(self, instance):
+        """ Thread starter for the handleFloatingActionButtonSpeedDial() function.
+
+        Parameters:
+        instance (obj): Object of the button that has been selected in the speed dial action button.
+
+        """
         if instance.icon == "arrow-left":
             threading.Thread(target=self.handleFloatingActionButtonSpeedDial, args=["arrow-left"]).start()
         elif instance.icon == "logout":
             threading.Thread(target=self.handleFloatingActionButtonSpeedDial, args=["logout"]).start()
 
     def handleFloatingActionButtonSpeedDial(self, icon_name):
+        """ Handles the functions of the back button.
+            Stores necessary user information during logout.
+
+        Parameters:
+        icon_name (str): Name of the icon of the button that has been pressed in the floating action
+                         button. 
+
+        """
         if icon_name == "arrow-left":
             self.transition(self.previousScreen, False)
         elif icon_name == "logout":
             self.screen.transition.duration = 0
             self.transition('loadingpage', True)
+
+            # Flushing the UI elements of the signup page.
             self.screen.get_screen('signup').ids.signup_firstname_textfield.text = ""
             self.screen.get_screen('signup').ids.signup_lastname_textfield.text = ""
             self.screen.get_screen('signup').ids.signup_username_textfield.text = ""
             self.screen.get_screen('signup').ids.signup_password_textfield.text = ""
 
-            # thread_movies = threading.Thread(target=upload_yr_movies, args=[self.y_movies, self.r_movies])
-            # thread_songs = threading.Thread(target=upload_yr_songs, args=[self.y_songs, self.r_songs])
-            # thread_books = threading.Thread(target=upload_yr_books, args=[self.y_books, self.r_books])
-
-            # thread_movies.start()
-            # thread_songs.start()
-            # thread_books.start()
-
-            # thread_movies.join()
-            # thread_songs.join()
-            # thread_books.join()
+            # Flushing the dictionaries of each content.
             self.content_dict_movies.clear()
             self.content_dict_books.clear()
             self.content_dict_songs.clear()
 
+            # Uploading updated (possibly) versions of the y matrices.
             upload_y_movies(self.y_movies)
             upload_y_songs(self.y_songs)
             upload_y_books(self.y_books)
@@ -347,9 +344,16 @@ class DemoUI(MDApp):
             self.transition('login_signup', True)
 
     def signup_thread_starter(self):
+        """ Thread starter for the signup function.
+
+        """
         threading.Thread(target=self.signup).start()
 
     def signup(self):
+        """ Signs the user up after verifications and prepares dataframes necessary for recommendation.
+            Transitions to the 'contentchoice' page after all verifications are made.
+
+        """
         self.screen.transition.duration = 0
         self.transition('loadingpage', True)
         self.first_name = self.screen.get_screen('signup').ids.signup_firstname_textfield.text
@@ -437,9 +441,21 @@ class DemoUI(MDApp):
             self.transition('contentchoice', True)
 
     def close_dialogue(self, obj):
+        """ Closes the dialogue box.
+
+        Parameters:
+        obj (object): Object of the button that was pressed in the dialogue box.
+
+        """
         self.dialogue.dismiss()
 
     def change_rating_color(self, rating_value):
+        """ Changes the color of the icon buttons based on the rating of the user.
+
+        Parameters:
+        rating_value (int): The rating that was given to a certain item by the user.
+
+        """
         self.current_item_rating = rating_value
         if rating_value == 1:
             self.screen.get_screen('itempage').ids.star1.text_color = 77 / 255, 148 / 255, 255 / 255, 1
@@ -479,6 +495,12 @@ class DemoUI(MDApp):
             self.screen.get_screen('itempage').ids.star5.text_color = 153 / 255, 153 / 255, 153 / 255, 1
 
     def username_is_available(self):
+        """ Checks whether an username is available during the user registration process.
+
+        Returns:
+        available (bool): True if username is available.
+ 
+        """
         available = True
         with open('users.json') as json_file:
             data = json.load(json_file)
@@ -490,6 +512,9 @@ class DemoUI(MDApp):
         return available
 
     def add_user_vectors(self):
+        """ Adds a new vector to the y matrix for the newly registered user.
+
+        """
         my_ratings_movies = np.zeros((self.y_movies.shape[0], 1), dtype=float)
         # adding new user y vector to y rating matrix (movies)
         self.y_movies = np.hstack((self.y_movies, my_ratings_movies))
@@ -503,6 +528,9 @@ class DemoUI(MDApp):
         self.y_books = np.hstack((self.y_books, my_ratings_books))
 
     def register_user(self):
+        """ Generates the new user ID and stores their info in the data store.
+
+        """
         self.user_id = self.y_movies.shape[1]
         self.add_user_vectors()
         with open('users.json') as json_file:
@@ -522,9 +550,16 @@ class DemoUI(MDApp):
             json.dump(data, f, indent=4)
 
     def login_thread_starter(self):
+        """ Starts the thread for the login function.
+
+        """
         threading.Thread(target=self.login).start()
 
     def login(self):
+        """ Logs the user in and calculates necessary dataframes needed for recommendation.
+            Transitions to the 'contentchoice' page after all verifications are made.
+
+        """
         self.screen.transition.duration = 0
         self.transition('loadingpage', True)
         self.username = self.screen.get_screen('login').ids.login_username_textfield.text
@@ -603,6 +638,9 @@ class DemoUI(MDApp):
             self.transition('contentchoice', True)
 
     def verify_user(self):
+        """ Verifies user credentials while logging in.
+
+        """
         verified = False
         with open('users.json') as json_file:
             data = json.load(json_file)
@@ -614,6 +652,9 @@ class DemoUI(MDApp):
         return verified
 
     def fetch_user_info(self):
+        """ Fetches user information from the data store after login is successful.
+
+        """
         with open('users.json') as json_file:
             data = json.load(json_file)
         for item in data['users']:
@@ -623,6 +664,9 @@ class DemoUI(MDApp):
                 self.user_id = item['user_id']
 
     def save_rating_changes(self):
+        """ Saves the changes after user has given a rating to a certain item. 
+
+        """
         if self.current_item_id != -1 and self.current_item_rating != 0:
             if self.current_content_choice == "movies":
                 self.y_movies = rate(self.current_item_id, self.user_id, self.y_movies,
@@ -635,9 +679,15 @@ class DemoUI(MDApp):
                                                   self.current_item_rating)
 
     def camera_thread_starter(self):
+        """ Starts the thread for the get_mood() function.
+
+        """
         threading.Thread(target=self.get_mood).start()
 
     def get_mood(self):
+        """ Opens the camera and predicts the mood of the user from their image.
+
+        """
         self.screen.transition.duration = 0
         self.transition('loadingpage', True)
         if take_photo():
@@ -652,9 +702,19 @@ class DemoUI(MDApp):
                 self.transition('camerapage', True)
 
     def mood_filter_thread_starter(self, mood):
+        """ Starts the thread for the mood_filter() function.
+
+        """
         threading.Thread(target=self.mood_filter, args=[mood]).start()
 
     def mood_filter(self, mood):
+        """ Filters content according to the mood of the user.
+            Transitions to the 'contentlist' page to display the filtered content.
+
+        Parameters:
+        mood (str): Name of the mood of the user.
+
+        """
         content_dict = dict()
         self.screen.transition.duration = 0
         self.transition('loadingpage', True)
@@ -699,6 +759,12 @@ class DemoUI(MDApp):
         self.transition('contentlist', True)
 
     def search_item(self, searching):
+        """ Allows the user to search for any item.
+
+        Parameters:
+        searching (bool): True if the user is searching for something.
+
+        """
         if self.current_content_choice == "movies":
             demo_dict = self.movie_dict
         elif self.current_content_choice == "songs":

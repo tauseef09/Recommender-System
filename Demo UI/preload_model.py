@@ -7,7 +7,12 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
 def preload_model():
-    """This function will preload the trained model and return it"""
+    """ Defined and loads the model.
+
+    Returns:
+    model (object): Keras object of the model that was loaded.
+
+    """
 
     # Create the model
     model = Sequential()

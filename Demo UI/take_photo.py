@@ -6,7 +6,12 @@ face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 
 def take_photo():
-    """This function will open the camera and take a picture. Press esc to quit and space bar to take picture"""
+    """ Opens the camera and takes a picture.
+
+    Returns:
+    capture_success (bool): True if image capture was successful.
+
+    """
 
     # prevents openCL usage and unnecessary logging messages
     cv2.ocl.setUseOpenCL(False)
@@ -49,7 +54,17 @@ def take_photo():
 
 
 def detect_mood(img_src, model):
-    """This function takes in an image and the model and returns the mood detected"""
+    """ Detects the mood from the given photo.
+
+    Parameters:
+    img_src (str): Source of the image.
+    model (obj): Keras of the preloaded model.
+
+    Returns:
+    emotion_dict[maxindex] (str): Name of the mood that was detected if any mood was detected.
+    "No faces detected" (str): If no face was detected in the photo.
+
+    """
 
     # reads the image
     image = cv2.imread(img_src)  # reads the image

@@ -3,50 +3,100 @@ import pandas as pd
 import numpy as np
 
 
-# downloads the y, r matrices of the movies and return the corresponding numpy arrays
 def download_y_movies():
-    # extracting the y and r matrices from the csv files
+    """ Reads the y matrix from the y_movies csv file.
+
+    Returns:
+    y (numpy array): y matrix that was read from the file.
+
+    """
+
     y = pd.read_csv('data/y_movies.csv').to_numpy()
     return y
 
 
-# downloads the y, r matrices of the books and return the corresponding numpy arrays
 def download_y_books():
-    # extracting the y and r matrices from the csv files
+    """ Reads the y matrix from the y_books csv file.
+
+    Returns:
+    y (numpy array): y matrix that was read from the file.
+
+    """
+
     y = pd.read_csv('data/y_books.csv').to_numpy()
     return y
 
 
-# downloads the y, r matrices of the songs and return the corresponding numpy arrays
 def download_y_songs():
-    # extracting the y and r matrices from the csv files
+    """ Reads the y matrix from the y_songs csv file.
+
+    Returns:
+    y (numpy array): y matrix that was read from the file.
+
+    """
+
     y = pd.read_csv('data/y_songs.csv').to_numpy()
     return y
 
 
 def upload_y_movies(y):
-    # converting numpy array to csv file
+    """ Saves the y matrix to the y_movies csv file.
+
+    Parameters:
+    y (numpy array): Matrix to be saved to the csv file.
+
+    """
+
     pd.DataFrame(y).to_csv('data/y_movies.csv', index=False)
 
 
 def upload_y_books(y):
-    # converting numpy array to csv file
+    """ Saves the y matrix to the y_books csv file.
+
+    Parameters:
+    y (numpy array): Matrix to be saved to the csv file.
+
+    """
+
     pd.DataFrame(y).to_csv('data/y_books.csv', index=False)
 
 
 def upload_y_songs(y):
-    # converting numpy array to csv file
+    """ Saves the y matrix to the y_songs csv file.
+
+    Parameters:
+    y (numpy array): Matrix to be saved to the csv file.
+
+    """
+
     pd.DataFrame(y).to_csv('data/y_songs.csv', index=False)
 
 
 def return_features():
-    # returns the number of features
+    """ Returns the number of features needed for training.
+
+    Returns:
+    n (int): Number of features that is to be returned.
+
+    """
+
     n = 11
     return n
 
 
 def mean_normal(y, r):
-    # function to normalize the dataset
+    """ Normalizes the values of y and r.
+
+    Parameters:
+    y (numpy array): The matrix to be normalized.
+    r (numpy array): Helper matrix.
+
+    Returns:
+    temp*r (numpy array): Normalized y matrix.
+    yMean (numpy array): Mean vector of the y matrix
+
+    """
+
     temp = np.zeros(y.shape, dtype=float)
     yMean = np.zeros((y.shape[0], 1), dtype=float)
     for i in range(len(r)):
@@ -58,7 +108,17 @@ def mean_normal(y, r):
 
 
 def f(initial_theta, *args):
-    # function for calculating the cost
+    """ Calculates the cost.
+
+    Parameters:
+    initial_theta (numpy array): Initial value of the parameters.
+    *args: Any other set of arguments required.
+
+    Returns:
+    J (float): Calculated cost.
+ 
+    """
+
     # preparing required variables
     yPrime, Lambda = args
     r = (yPrime != 0) * 1
@@ -79,7 +139,16 @@ def f(initial_theta, *args):
 
 
 def grads(initial_theta, *args):
-    # function for calculating the gradients
+    """ Calculates the gradients.
+
+    Paramters:
+    initial_theta (numpy array): Initial value of the parameters.
+    *args: Any other set of arguments required.
+
+    Returns:
+    rolled_up_grads (numpy array): Calculated vector of gradients.
+
+    """
     # preparing required variables
     yPrime, Lambda = args
     r = (yPrime != 0) * 1
@@ -318,13 +387,31 @@ def recommend_songs(userID, y, r):
 
 
 def rate(item_id, user_id, y, rating):
-    # allows user to rate certain items
-    # updating y and r based on the user's rating on item_id
+    """ Updates the y matrix according to a given rating.
+
+    Parameters:
+    item_id (int): ID of the item to be rated.
+    user_id (int): ID of the user who is rating the item.
+    rating (int): Rating given to the item by the user.
+
+    Returns:
+    y (numpy array): Updated numpy array.
+
+    """
+
     y[item_id, user_id] = rating
     return y
 
 
 def filter_content_movies(user_mood, suggested_content_dict):
+    """ Filters the content dictionary of movies based on a mood.
+
+    Parameters:
+    user_mood (str): Mood based on which the dictionary is to be filtered.
+    suggested_content_dict (dictionary): The dictionary based on which the content is to be filtered.
+ 
+    """
+
     df = pd.read_csv('data/movie_ids.csv')
 
     # filters the dataframe based on user_mood and user_likes dictionary
@@ -338,6 +425,14 @@ def filter_content_movies(user_mood, suggested_content_dict):
 
 
 def filter_content_books(user_mood, suggested_content_dict):
+    """ Filters the content dictionary of books based on a mood.
+
+    Parameters:
+    user_mood (str): Mood based on which the dictionary is to be filtered.
+    suggested_content_dict (dictionary): The dictionary based on which the content is to be filtered.
+ 
+    """
+
     df = pd.read_csv('data/book_ids.csv')
 
     # filters the dataframe based on user_mood and user_likes dictionary
@@ -351,6 +446,14 @@ def filter_content_books(user_mood, suggested_content_dict):
 
 
 def filter_content_songs(user_mood, suggested_content_dict):
+    """ Filters the content dictionary of songs based on a mood.
+
+    Parameters:
+    user_mood (str): Mood based on which the dictionary is to be filtered.
+    suggested_content_dict (dictionary): The dictionary based on which the content is to be filtered.
+ 
+    """
+
     df = pd.read_csv('data/song_ids.csv')
 
     # filters the dataframe based on user_mood and user_likes dictionary
@@ -364,6 +467,13 @@ def filter_content_songs(user_mood, suggested_content_dict):
 
 
 def create_movies_dict():
+    """ Creates a dictionary out of the list of movies in the movie_ids csv file.
+
+    Returns:
+    demo_dict (dictionary): Dictionary containing the id and names of all the movies in the file.
+
+    """
+
     movieList = pd.read_csv('data/movie_ids.csv')["name"].to_list()
     demo_dict = dict()
     for i in range(len(movieList)):
@@ -372,6 +482,13 @@ def create_movies_dict():
 
 
 def create_songs_dict():
+    """ Creates a dictionary out of the list of songs in the song_ids csv file.
+
+    Returns:
+    demo_dict (dictionary): Dictionary containing the id and names of all the songs in the file.
+
+    """
+
     songList = pd.read_csv('data/song_ids.csv')["name"].to_list()
     demo_dict = dict()
     for i in range(len(songList)):
@@ -380,6 +497,13 @@ def create_songs_dict():
 
 
 def create_books_dict():
+    """ Creates a dictionary out of the list of books in the book_ids csv file.
+
+    Returns:
+    demo_dict (dictionary): Dictionary containing the id and names of all the books in the file.
+
+    """
+
     bookList = pd.read_csv('data/book_ids.csv')["name"].to_list()
     demo_dict = dict()
     for i in range(len(bookList)):
@@ -388,6 +512,23 @@ def create_books_dict():
 
 
 def recommend(y_movies_df, merged, moviemat, movie_dict, movies_rated, movies_liked, filt_good_rating_count, filt_rating_count):
+    """ Generates the dictionary of recommendations for the user.
+
+    Parameters:
+    y_movies_df (dataframe): Dataframe calculated from the y matrix.
+    merged (dataframe): Merged table containing all the users' ratings for all items.
+    movie_dict (dictionary): Dictionary containing the id and names of all items (not just movies).
+    movies_rated (int): Number of items of a certain content rated by the user (not just movies).
+    movies_liked (int): Number of items of a certain content liked (rated equal of above 3 stars)
+                        by the user (not just movies).
+    filt_good_rating_count: Filtered rating count of the liked items (not just movies).
+    filt_rating_count: Filtered rating count of the rated items (not just movies). 
+
+    Returns:
+    suggestion (dictionary): Dictionary containing the suggestions for a user.
+
+    """
+
     # create the average rating dataframe
     ratings = pd.DataFrame(merged.groupby(['id', 'name'])['rating'].mean()).reset_index().sort_values('rating', ascending=False)
 
@@ -438,7 +579,19 @@ def recommend(y_movies_df, merged, moviemat, movie_dict, movies_rated, movies_li
 
 
 def find_correlation(name, moviemat, asc):
-    # returns the correlation regarding the passed name
+    """ Calculates the correlation matrix of a certain item.
+
+    Parameters:
+    name (str): Name of the item for which the correlation is to be calculated.
+    moviemat (dataframe): Pivot table to find the correlation.
+    asc (bool): True if the sorting is to be done in ascending order.
+
+    Returns:
+    corr_movie.sort_values('Correlation', ascending=asc).iloc[1:27] (dataframe):
+    Dataframe containing the correlated items to the given item.
+
+    """
+
     movie_ratings = moviemat[name]
     similar_to_movie = moviemat.corrwith(movie_ratings)
     corr_movie = pd.DataFrame(similar_to_movie, columns=['Correlation'])
