@@ -78,6 +78,17 @@ ScreenManager:
             app.login_thread_starter()
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
+    MDFloatingActionButtonSpeedDial:
+        data: {"arrow-left":"Back"}
+        callback: app.action_button_thread_starter
+        rotation_root_button: True
+        hint_animation: True
+        label_text_color: [239/255, 239/255, 239/255, 1]
+        bg_hint_color: [38/255, 50/255, 56/255, 1]
+        bg_color_stack_button: [38/255, 50/255, 56/255, 1]
+        bg_color_root_button: [38/255, 50/255, 56/255, 1]
+        color_icon_root_button: [239/255, 239/255, 239/255, 1]
+        color_icon_stack_button: [239/255, 239/255, 239/255, 1]
 
 <Signup>:
     name: 'signup'
@@ -125,6 +136,18 @@ ScreenManager:
             app.signup_thread_starter()
         theme_text_color: 'Custom'
         text_color: 38/255, 50/255, 56/255, 1
+    MDFloatingActionButtonSpeedDial:
+        data: {"arrow-left":"Back"}
+        callback: app.action_button_thread_starter
+        rotation_root_button: True
+        hint_animation: True
+        label_text_color: [239/255, 239/255, 239/255, 1]
+        bg_hint_color: [38/255, 50/255, 56/255, 1]
+        bg_color_stack_button: [38/255, 50/255, 56/255, 1]
+        bg_color_root_button: [38/255, 50/255, 56/255, 1]
+        color_icon_root_button: [239/255, 239/255, 239/255, 1]
+        color_icon_stack_button: [239/255, 239/255, 239/255, 1]
+
 
 <ContentChoice>:
     name: 'contentchoice'

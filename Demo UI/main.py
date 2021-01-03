@@ -11,6 +11,7 @@ from recommender import filter_content_movies, filter_content_books, filter_cont
 from preload_model import preload_model
 from take_photo import detect_mood, take_photo
 from kivy.clock import Clock
+from kivy.clock import mainthread
 from kivymd.uix.list import MDList, OneLineListItem
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
@@ -155,7 +156,7 @@ class DemoUI(MDApp):
 
     def choice_songs(self):
         """ Sets up the UI elements of the 'mainmenu' page for content choice: songs.
-        
+
         """
         self.current_content_choice = "songs"
         self.transition('mainmenu', True)
@@ -165,7 +166,7 @@ class DemoUI(MDApp):
 
     def choice_books(self):
         """ Sets up the UI elements of the 'mainmenu' page for content choice: books.
-        
+
         """
         self.current_content_choice = "books"
         self.transition('mainmenu', True)
@@ -229,6 +230,12 @@ class DemoUI(MDApp):
             else:
                 content_dict = self.content_dict_songs
 
+        self.make_list_ui(content_dict)
+
+        self.transition('contentlist', True)
+
+    @mainthread
+    def make_list_ui(self, content_dict):
         i = 0
         self.screen.get_screen('contentlist').ids.list_view.clear_widgets()
         for key, value in content_dict.items():
@@ -238,8 +245,6 @@ class DemoUI(MDApp):
             item = OneLineListItem(text=value, on_release=self.show_item)
             item.id = str(key)
             self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
-
-        self.transition('contentlist', True)
 
     def show_item(self, obj):
         """ Transitions to and prepares the UI elements of the 'itempage' for the item
@@ -316,7 +321,7 @@ class DemoUI(MDApp):
 
         Parameters:
         icon_name (str): Name of the icon of the button that has been pressed in the floating action
-                         button. 
+                         button.
 
         """
         if icon_name == "arrow-left":
@@ -349,13 +354,18 @@ class DemoUI(MDApp):
         """
         threading.Thread(target=self.signup).start()
 
+    @mainthread
+    def dialogue_box_error_ui(self, title, text, button_text):
+        cancel_btn_dialogue = MDFlatButton(text=button_text, on_release=self.close_dialogue)
+        self.dialogue = MDDialog(title=title, text=text,
+                                size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
+        self.dialogue.open()
+
     def signup(self):
         """ Signs the user up after verifications and prepares dataframes necessary for recommendation.
             Transitions to the 'contentchoice' page after all verifications are made.
 
         """
-        self.screen.transition.duration = 0
-        self.transition('loadingpage', True)
         self.first_name = self.screen.get_screen('signup').ids.signup_firstname_textfield.text
         first_name_false = True
 
@@ -369,14 +379,12 @@ class DemoUI(MDApp):
         password_false = True
 
         if self.first_name.split() == [] or self.last_name.split() == [] or self.username.split() == [] or self.password.split() == []:
-            cancel_btn_dialogue = MDFlatButton(text="Retry", on_release=self.close_dialogue)
-            self.dialogue = MDDialog(title="Invalid Info", text="Please enter valid information and password.",
-                                     size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
-            self.dialogue.open()
+            self.dialogue_box_error_ui("Invalid Info", "Please enter valid information and password.", "Retry")
         else:
             if self.username_is_available():
                 self.register_user()
-
+                self.screen.transition.duration = 0
+                self.transition('loadingpage', True)
                 self.y_movies_df = pd.DataFrame(self.y_movies)
                 self.y_movies_df = self.y_movies_df.T.stack().reset_index()
                 self.y_movies_df.columns = ['user_id','id','rating']
@@ -430,11 +438,7 @@ class DemoUI(MDApp):
                 username_false = False
                 password_false = False
             else:
-                cancel_btn_dialogue = MDFlatButton(text="Retry", on_release=self.close_dialogue)
-                self.dialogue = MDDialog(title="Username Unavailable",
-                                         text="This username is taken. Please try another one.",
-                                         size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
-                self.dialogue.open()
+                self.dialogue_box_error_ui("Username Unavailable", "This username is taken. Please try another one.", "Retry")
 
         if first_name_false is False and last_name_false is False and username_false is False and password_false is False:
             self.screen.get_screen('contentchoice').ids.welcome_label.text = "Welcome, " + self.first_name + "!"
@@ -499,7 +503,7 @@ class DemoUI(MDApp):
 
         Returns:
         available (bool): True if username is available.
- 
+
         """
         available = True
         with open('users.json') as json_file:
@@ -560,8 +564,6 @@ class DemoUI(MDApp):
             Transitions to the 'contentchoice' page after all verifications are made.
 
         """
-        self.screen.transition.duration = 0
-        self.transition('loadingpage', True)
         self.username = self.screen.get_screen('login').ids.login_username_textfield.text
         username_false = True
 
@@ -569,13 +571,13 @@ class DemoUI(MDApp):
         password_false = True
 
         if self.username.split() == [] or self.password.split() == []:
-            cancel_btn_dialogue = MDFlatButton(text="Retry", on_release=self.close_dialogue)
-            self.dialogue = MDDialog(title="Invalid Info", text="Please enter valid username and password.",
-                                     size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
-            self.dialogue.open()
+            self.dialogue_box_error_ui("Invalid Info", "Please enter valid information and password.", "Retry")
+
         else:
             if self.verify_user():
                 self.fetch_user_info()
+                self.screen.transition.duration = 0
+                self.transition('loadingpage', True)
 
                 self.y_movies_df = pd.DataFrame(self.y_movies)
                 self.y_movies_df = self.y_movies_df.T.stack().reset_index()
@@ -628,10 +630,7 @@ class DemoUI(MDApp):
                 username_false = False
                 password_false = False
             else:
-                cancel_btn_dialogue = MDFlatButton(text="Retry", on_release=self.close_dialogue)
-                self.dialogue = MDDialog(title="Login Failed", text="Username and Password do not match.",
-                                         size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
-                self.dialogue.open()
+                self.dialogue_box_error_ui("Login Failed", "Username and Password do not match.", "Retry")
 
         if username_false is False and password_false is False:
             self.screen.get_screen('contentchoice').ids.welcome_label.text = "Welcome, " + self.first_name + "!"
@@ -664,7 +663,7 @@ class DemoUI(MDApp):
                 self.user_id = item['user_id']
 
     def save_rating_changes(self):
-        """ Saves the changes after user has given a rating to a certain item. 
+        """ Saves the changes after user has given a rating to a certain item.
 
         """
         if self.current_item_id != -1 and self.current_item_rating != 0:
@@ -684,6 +683,20 @@ class DemoUI(MDApp):
         """
         threading.Thread(target=self.get_mood).start()
 
+    @mainthread
+    def create_dialogue_box_mood(self, mood):
+        cancel_btn_dialogue = MDFlatButton(text="Ok!", on_release=self.close_dialogue)
+        self.dialogue = MDDialog(title="Mood Detected: " + mood, text="Enjoy exploring " + mood + " " + self.current_content_choice + "!",
+                                size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
+        self.dialogue.open()
+
+    @mainthread
+    def create_dialogue_box_noFace(self):
+        cancel_btn_dialogue = MDFlatButton(text="Retry", on_release=self.close_dialogue)
+        self.dialogue = MDDialog(title="No Faces Detected", text="Please check if there is sufficient light.",
+                                size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
+        self.dialogue.open()
+
     def get_mood(self):
         """ Opens the camera and predicts the mood of the user from their image.
 
@@ -695,10 +708,7 @@ class DemoUI(MDApp):
             if mood != "No faces detected":
                 self.mood_filter(mood)
             else:
-                cancel_btn_dialogue = MDFlatButton(text="Retry", on_release=self.close_dialogue)
-                self.dialogue = MDDialog(title="No Faces Detected", text="Please check if there is sufficient light.",
-                                         size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
-                self.dialogue.open()
+                self.create_dialogue_box_noFace()
                 self.transition('camerapage', True)
 
     def mood_filter_thread_starter(self, mood):
@@ -715,6 +725,7 @@ class DemoUI(MDApp):
         mood (str): Name of the mood of the user.
 
         """
+        self.create_dialogue_box_mood(mood)
         content_dict = dict()
         self.screen.transition.duration = 0
         self.transition('loadingpage', True)
@@ -746,15 +757,7 @@ class DemoUI(MDApp):
                 content_dict = self.content_dict_songs
                 content_dict = filter_content_songs(mood, content_dict)
 
-        i = 0
-        self.screen.get_screen('contentlist').ids.list_view.clear_widgets()
-        for key, value in content_dict.items():
-            if i == 24:
-                break
-            i += 1
-            item = OneLineListItem(text=value, on_release=self.show_item)
-            item.id = str(key)
-            self.screen.get_screen('contentlist').ids.list_view.add_widget(item)
+        self.make_list_ui(content_dict)
 
         self.transition('contentlist', True)
 

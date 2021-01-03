@@ -116,7 +116,7 @@ def f(initial_theta, *args):
 
     Returns:
     J (float): Calculated cost.
- 
+
     """
 
     # preparing required variables
@@ -409,7 +409,7 @@ def filter_content_movies(user_mood, suggested_content_dict):
     Parameters:
     user_mood (str): Mood based on which the dictionary is to be filtered.
     suggested_content_dict (dictionary): The dictionary based on which the content is to be filtered.
- 
+
     """
 
     df = pd.read_csv('data/movie_ids.csv')
@@ -430,7 +430,7 @@ def filter_content_books(user_mood, suggested_content_dict):
     Parameters:
     user_mood (str): Mood based on which the dictionary is to be filtered.
     suggested_content_dict (dictionary): The dictionary based on which the content is to be filtered.
- 
+
     """
 
     df = pd.read_csv('data/book_ids.csv')
@@ -451,7 +451,7 @@ def filter_content_songs(user_mood, suggested_content_dict):
     Parameters:
     user_mood (str): Mood based on which the dictionary is to be filtered.
     suggested_content_dict (dictionary): The dictionary based on which the content is to be filtered.
- 
+
     """
 
     df = pd.read_csv('data/song_ids.csv')
@@ -522,7 +522,7 @@ def recommend(y_movies_df, merged, moviemat, movie_dict, movies_rated, movies_li
     movies_liked (int): Number of items of a certain content liked (rated equal of above 3 stars)
                         by the user (not just movies).
     filt_good_rating_count: Filtered rating count of the liked items (not just movies).
-    filt_rating_count: Filtered rating count of the rated items (not just movies). 
+    filt_rating_count: Filtered rating count of the rated items (not just movies).
 
     Returns:
     suggestion (dictionary): Dictionary containing the suggestions for a user.
