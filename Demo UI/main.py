@@ -234,8 +234,16 @@ class DemoUI(MDApp):
 
         self.transition('contentlist', True)
 
+    # @mainthread runs this function in the main thread since all UI elements must be updated in the main thread.
     @mainthread
     def make_list_ui(self, content_dict):
+        """ Creates the UI elements of the list of items. UI elements must be updated in the
+            main thread.
+
+        Parameters:
+        content_dict (dictionary): Dctionary containing the suggestions for a user.
+
+        """
         i = 0
         self.screen.get_screen('contentlist').ids.list_view.clear_widgets()
         for key, value in content_dict.items():
@@ -354,8 +362,18 @@ class DemoUI(MDApp):
         """
         threading.Thread(target=self.signup).start()
 
+    # @mainthread runs this function in the main thread since all UI elements must be updated in the main thread.
     @mainthread
     def dialogue_box_error_ui(self, title, text, button_text):
+        """ Creates and opens the dialogue box on the screen.
+
+        Parameters:
+        title (str): The title of the dialogue box.
+        text (str): The text of the dialogue box.
+        button_text (str): Text of the button of the dialogue box.
+
+        """
+
         cancel_btn_dialogue = MDFlatButton(text=button_text, on_release=self.close_dialogue)
         self.dialogue = MDDialog(title=title, text=text,
                                 size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
@@ -683,15 +701,26 @@ class DemoUI(MDApp):
         """
         threading.Thread(target=self.get_mood).start()
 
+    # @mainthread runs this function in the main thread since all UI elements must be updated in the main thread.
     @mainthread
     def create_dialogue_box_mood(self, mood):
+        """ Creates and opens the dialogue box to notify the detected mood of the user.
+
+        Parameters:
+        mood (str): Detected mood.
+
+        """
         cancel_btn_dialogue = MDFlatButton(text="Ok!", on_release=self.close_dialogue)
         self.dialogue = MDDialog(title="Mood Detected: " + mood, text="Enjoy exploring " + mood + " " + self.current_content_choice + "!",
                                 size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
         self.dialogue.open()
 
+    # @mainthread runs this function in the main thread since all UI elements must be updated in the main thread.
     @mainthread
     def create_dialogue_box_noFace(self):
+        """ Creates opens the dialogue box to notify the user that no face was detected.
+
+        """
         cancel_btn_dialogue = MDFlatButton(text="Retry", on_release=self.close_dialogue)
         self.dialogue = MDDialog(title="No Faces Detected", text="Please check if there is sufficient light.",
                                 size_hint=(0.7, 0.2), buttons=[cancel_btn_dialogue])
